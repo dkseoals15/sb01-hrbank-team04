@@ -1,6 +1,8 @@
 spring:
   application:
     name: sb01-hrbank-team04
+  profiles:
+    active: dev # prod
   servlet:
     multipart:
       enabled: true
@@ -8,14 +10,6 @@ spring:
     hibernate:
       ddl-auto: none
     database: postgresql
-    show-sql: true  # TODO: 추후 배포 시 false로 하는 게 좋겠음
-    properties:
-      hibernate:
-        # TODO: 추후 배포 시 이것도.. 없애야
-        format_sql: true
-        use_sql_comments: true
-        highlight_sql: true
-        generate_statistics: true
   transaction:
     default-timeout: 30
   datasource:
@@ -33,13 +27,6 @@ server:
       charset: UTF-8
       enabled: true
       force: true
-
-# logging
-logging:
-  level:
-    org:
-      hibernate:
-        sql: debug  # TODO: 추후 배포 시 info로 수정하는 것
 
 # swagger
 springdoc:
