@@ -1,6 +1,7 @@
 package com.codeit.sb01hrbankteam04.controller;
 
-import com.codeit.sb01hrbankteam04.domain.Status;
+import com.codeit.sb01hrbankteam04.model.Employee;
+import com.codeit.sb01hrbankteam04.model.Status;
 import com.codeit.sb01hrbankteam04.dto.employee.EmployeeCrateRequest;
 import com.codeit.sb01hrbankteam04.dto.employee.EmployeeResponse;
 import com.codeit.sb01hrbankteam04.dto.employee.EmployeeUpdateRequest;
@@ -115,8 +116,7 @@ public class EmployeeController {
     if (toDate == null) {
       toDate = LocalDate.now(); // 기본값: 현재 날짜
     }
-    return ResponseEntity.ok(10);
-    //return employeeService.getEmployeeCount(status, fromDate, toDate);
+    return employeeService.getEmployeeCount(status, fromDate, toDate);
   }
 
   @GetMapping("/stats/distribution") //부서별 직원 분포,직무별 직원 분포

@@ -1,5 +1,6 @@
 package com.codeit.sb01hrbankteam04.dto.employee;
 
+import com.codeit.sb01hrbankteam04.model.Employee;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,7 @@ public class EmployeeResponse {
   private String status;
   private Long profileImageId;
 
+  public static EmployeeResponse fromEntity(Employee employee) {
+    return null;
+  }
 }

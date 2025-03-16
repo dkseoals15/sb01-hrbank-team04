@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: sb01-hrbank-team04
+  profiles:
+    active: dev # prod
+  servlet:
+    multipart:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database: postgresql
+  transaction:
+    default-timeout: 30
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# swagger
+springdoc:
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger-ui
+    display-request-duration: true
+    doc-expansion: none
+    filter: true
+    show-extensions: true
