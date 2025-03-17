@@ -41,7 +41,7 @@ public class Employee extends BaseEntity {
   @Column(nullable = false)
   private Instant joinedAt;
 
-  @ManyToOne
+  @OneToOne
   @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"))
   @OnDelete(action= OnDeleteAction.SET_NULL)
   private File profile;
