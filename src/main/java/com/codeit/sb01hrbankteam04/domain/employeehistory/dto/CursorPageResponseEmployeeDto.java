@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class CursorPageResponseEmployeeDto {
 
-  private List<EmployeeHistoryDTO> content;
+  private List<ChangeLogDto> content;
 
   private String nextCursor;
 
