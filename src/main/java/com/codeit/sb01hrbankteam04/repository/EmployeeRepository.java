@@ -32,7 +32,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
   @Query("SELECT new com.codeit.sb01hrbankteam04.dto.employee.EmployeeGroupResult(e.position, COUNT(e)) " +
       "FROM Employee e WHERE e.status = :status GROUP BY e.position")
-  List<EmployeeGroupResult> findEmployeeCountByJob(@Param("status") Status status);
+  List<EmployeeGroupResult> findEmployeeCountByPosition(@Param("status") Status status);
 
   long countByStatus(Status status);
 

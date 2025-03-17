@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EmployeeServiceTest {
+class EmployeeServiceDepartmentTest {
 
   @Autowired
   private EmployeeService employeeService;
@@ -46,11 +46,11 @@ class EmployeeServiceTest {
     janitorDepartment = createDepartment("Janitor", "Handles cleaning and maintenance", 15);
 
     // 직원 추가
-    addEmployees(financeDepartment, 7);
-    addEmployees(backEndDepartment, 12);
-    addEmployees(frontEndDepartment, 5);
-    addEmployees(managementDepartment, 13);
-    addEmployees(janitorDepartment, 13);
+    addEmployees(financeDepartment, 3, 5, 7);
+    addEmployees(backEndDepartment, 2, 5, 6);
+    addEmployees(frontEndDepartment, 1, 3, 5);
+    addEmployees(managementDepartment, 3, 5, 8);
+    addEmployees(janitorDepartment, 1,2,3);
   }
 
   private Department createDepartment(String name, String description, int yearsOld) {
@@ -62,8 +62,8 @@ class EmployeeServiceTest {
     return departmentRepository.save(department);
   }
 
-  private void addEmployees(Department department, int count) {
-    for (int i = 1; i <= count; i++) {
+  private void addEmployees(Department department, int head, int mid, int small) {
+    for (int i = 1; i <= head; i++) {
       Employee employee = new Employee();
       employee.setName(department.getName() + " Employee " + i);
       employee.setEmail(department.getName().toLowerCase() + i + "@example.com");
@@ -73,6 +73,37 @@ class EmployeeServiceTest {
 
       employee.setStatus(Status.ACTIVE);
       employee.setDepartment(department);
+      employee.setPosition("부장");
+      employee.setJoinedAt(
+          LocalDate.of(2023, 1, (i % 28) + 1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+      employeeRepository.save(employee);
+    }
+    for (int i = 1; i <= mid; i++) {
+      Employee employee = new Employee();
+      employee.setName(department.getName() + " Employee " + i);
+      employee.setEmail(department.getName().toLowerCase() + i + "@example.com");
+
+      // 중복 방지를 위한 유니크한 직원 코드 생성
+      employee.setCode("EMP_" + department.getName().substring(0, 3).toUpperCase() + "_" + i + "_" + System.nanoTime());
+
+      employee.setStatus(Status.ACTIVE);
+      employee.setDepartment(department);
+      employee.setPosition("과장");
+      employee.setJoinedAt(
+          LocalDate.of(2023, 1, (i % 28) + 1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+      employeeRepository.save(employee);
+    }
+    for (int i = 1; i <= small; i++) {
+      Employee employee = new Employee();
+      employee.setName(department.getName() + " Employee " + i);
+      employee.setEmail(department.getName().toLowerCase() + i + "@example.com");
+
+      // 중복 방지를 위한 유니크한 직원 코드 생성
+      employee.setCode("EMP_" + department.getName().substring(0, 3).toUpperCase() + "_" + i + "_" + System.nanoTime());
+
+      employee.setStatus(Status.ACTIVE);
+      employee.setDepartment(department);
+      employee.setPosition("대리");
       employee.setJoinedAt(
           LocalDate.of(2023, 1, (i % 28) + 1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
       employeeRepository.save(employee);
@@ -81,8 +112,7 @@ class EmployeeServiceTest {
 
 
   @Test
-  void 직원_분포_조회() {
-    // 직원 분포 조회
+  void 부서별_직원_분포_조회() {
     List<EmployeeDistributionResponse> employeeDistribution = employeeService.getEmployeeDistribution(
         "department", Status.ACTIVE);
 
@@ -111,5 +141,6 @@ class EmployeeServiceTest {
     // 콘솔 출력 (디버깅용)
     System.out.println("employeeDistribution = " + employeeDistribution);
   }
+
 
 }

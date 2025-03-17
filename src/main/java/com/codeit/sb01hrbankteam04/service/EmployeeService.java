@@ -49,8 +49,8 @@ public class EmployeeService {
           ))
           .collect(Collectors.toList());
 
-    } else if ("job".equalsIgnoreCase(groupBy)) {
-      distributionList = employeeRepository.findEmployeeCountByJob(status)
+    } else if ("position".equalsIgnoreCase(groupBy)) {
+      distributionList = employeeRepository.findEmployeeCountByPosition(status)
           .stream()
           .map(result -> new EmployeeDistributionResponse(
               result.getGroupName(),
