@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class HistoryLogResponse {
+public class CursorPageResponseEmployeeDto {
 
   private List<EmployeeHistoryDTO> content;
 
