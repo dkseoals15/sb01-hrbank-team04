@@ -8,8 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class EmployeeDistributionResponse {
+
   String groupKey;
-  int count;
+  long count;
   double percentage;
 
+  @Override
+  public String toString() {
+    return "EmployeeDistributionResponse{" + "groupKey='" + groupKey + '\'' + ", count=" + count
+        + ", percentage=" + percentage + '}';
+  }
 }

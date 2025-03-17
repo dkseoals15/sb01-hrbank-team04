@@ -1,8 +1,6 @@
 package com.codeit.sb01hrbankteam04.service;
 
-import com.codeit.sb01hrbankteam04.dto.employee.EmployeeCrateRequest;
-import com.codeit.sb01hrbankteam04.dto.employee.EmployeesResponse;
-import com.codeit.sb01hrbankteam04.model.Employee;
+import com.codeit.sb01hrbankteam04.dto.employee.EmployeeDistributionResponse;
 import com.codeit.sb01hrbankteam04.model.Status;
 import com.codeit.sb01hrbankteam04.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
@@ -10,11 +8,11 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @AllArgsConstructor
@@ -27,7 +25,7 @@ public class EmployeeService {
 
     Instant fromInstant = (fromDate != null)
         ? fromDate.atStartOfDay(ZoneOffset.UTC).toInstant()
-        : Instant.ofEpochMilli(0); // Unix epoch time (1970-01-01T00:00:00Z)
+        : Instant.ofEpochMilli(0);
 
     Instant toInstant = (toDate != null)
         ? toDate.atTime(LocalTime.MAX).atZone(ZoneOffset.UTC).toInstant()
@@ -35,5 +33,40 @@ public class EmployeeService {
 
     int count = employeeRepository.countEmployees(status, fromInstant, toInstant);
     return ResponseEntity.ok(count);
+  }
+
+  public List<EmployeeDistributionResponse> getEmployeeDistribution(String groupBy, Status status) {
+    List<EmployeeDistributionResponse> distributionList;
+    long totalEmployees = employeeRepository.countByStatus(status); // 전체 직원 수 조회
+
+    if ("department".equalsIgnoreCase(groupBy)) {
+      distributionList = employeeRepository.findEmployeeCountByDepartment(status)
+          .stream()
+          .map(result -> new EmployeeDistributionResponse(
+              result.getGroupName(),
+              result.getCount(),
+              calculatePercentage(result.getCount(), totalEmployees)
+          ))
+          .collect(Collectors.toList());
+
+    } else if ("job".equalsIgnoreCase(groupBy)) {
+      distributionList = employeeRepository.findEmployeeCountByJob(status)
+          .stream()
+          .map(result -> new EmployeeDistributionResponse(
+              result.getGroupName(),
+              result.getCount(),
+              calculatePercentage(result.getCount(), totalEmployees)
+          ))
+          .collect(Collectors.toList());
+
+    } else {
+      throw new IllegalArgumentException("Invalid groupBy value: " + groupBy);
+    }
+
+    return distributionList;
+  }
+
+  private double calculatePercentage(long count, long total) {
+    return (total == 0) ? 0 : (count * 100.0) / total;
   }
 }

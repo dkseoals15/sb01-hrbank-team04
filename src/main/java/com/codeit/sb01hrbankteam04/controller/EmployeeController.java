@@ -1,6 +1,6 @@
 package com.codeit.sb01hrbankteam04.controller;
 
-import com.codeit.sb01hrbankteam04.model.Employee;
+import com.codeit.sb01hrbankteam04.dto.employee.EmployeeDistributionResponse;
 import com.codeit.sb01hrbankteam04.model.Status;
 import com.codeit.sb01hrbankteam04.dto.employee.EmployeeCrateRequest;
 import com.codeit.sb01hrbankteam04.dto.employee.EmployeeResponse;
@@ -10,6 +10,7 @@ import com.codeit.sb01hrbankteam04.dto.employee.EmployeesResponse;
 import com.codeit.sb01hrbankteam04.service.EmployeeService;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @RequestMapping("/api/employees")
 public class EmployeeController {
+
   private final EmployeeService employeeService;
+
   @GetMapping
   public ResponseEntity<EmployeesResponse> getEmployees(
       @RequestParam(required = false) String nameOrEmail,
@@ -38,10 +41,8 @@ public class EmployeeController {
       @RequestParam(required = false) String position,
       @RequestParam(required = false) String hireDateFrom,
       @RequestParam(required = false) String hireDateTo,
-      @RequestParam(required = false) String status,
-      @RequestParam(required = false) Long idAfter,
-      @RequestParam(required = false) String cursor,
-      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(required = false) String status, @RequestParam(required = false) Long idAfter,
+      @RequestParam(required = false) String cursor, @RequestParam(defaultValue = "10") int size,
       @RequestParam(defaultValue = "name") String sortField,
       @RequestParam(defaultValue = "asc") String sortDirection) {
 
@@ -83,8 +84,7 @@ public class EmployeeController {
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<EmployeeUpdateResponse> updateEmployee(
-      @PathVariable Long id,
+  public ResponseEntity<EmployeeUpdateResponse> updateEmployee(@PathVariable Long id,
       @RequestBody EmployeeUpdateRequest request,
       @RequestParam(required = false) MultipartFile profile) throws IOException {
 
@@ -109,30 +109,27 @@ public class EmployeeController {
   @GetMapping("/count")//총 직원 수
   public ResponseEntity<Integer> getEmployeeCount(
       @RequestParam(value = "status", required = false) Status status,
-      @RequestParam(value = "fromDate", required = false)
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
-      @RequestParam(value = "toDate", required = false)
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
+      @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+      @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
     if (toDate == null) {
-      toDate = LocalDate.now(); // 기본값: 현재 날짜
+      toDate = LocalDate.now(); // 기본 값: 현재 날짜
     }
     return employeeService.getEmployeeCount(status, fromDate, toDate);
   }
 
   @GetMapping("/stats/distribution") //부서별 직원 분포,직무별 직원 분포
-  public void getEmployeeDistribution(
+  public ResponseEntity<List<EmployeeDistributionResponse>> getEmployeeDistribution(
       @RequestParam(value = "groupBy", defaultValue = "department") String groupBy,
-      @RequestParam(value = "status", defaultValue = "ACTIVE") String status) {
-    //ResponseEmployeeDistribution 로 반환
-    //return employeeService.getEmployeeDistribution(groupBy, status);
+      @RequestParam(value = "status", defaultValue = "ACTIVE") Status status) {
+    List<EmployeeDistributionResponse> employeeDistribution = employeeService.getEmployeeDistribution(
+        groupBy, status);
+    return ResponseEntity.ok(employeeDistribution);
   }
 
   @GetMapping("/stats/trend") //최근 1년 월별 직원수 변동 추이, 이번달 입사자 수
   public void getEmployeeTrend(
-      @RequestParam(value = "from", required = false)
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-      @RequestParam(value = "to", required = false)
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+      @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+      @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
       @RequestParam(value = "unit", defaultValue = "month") String unit) {
 
     if (to == null) {
