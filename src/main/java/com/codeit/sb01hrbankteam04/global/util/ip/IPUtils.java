@@ -1,22 +1,10 @@
-package com.codeit.sb01hrbankteam04.global.util;
+package com.codeit.sb01hrbankteam04.global.util.ip;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
 
 public class IPUtils {
   public static String getClientIp(HttpServletRequest request) {
-    List<String> headers = Arrays.asList(
-        "X-Forwarded-For",
-        "Proxy-Client-IP",
-        "WL-Proxy-Client-IP",
-        "HTTP_CLIENT_IP",
-        "HTTP_X_FORWARDED_FOR",
-        "X-Real-IP",
-        "X-RealIP"
-    );
-
-    for (String header : headers) {
+    for (String header : IPHeader.getAllHeaderNames()) {
       String ip = request.getHeader(header);
       if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
         return getFirstIp(ip);

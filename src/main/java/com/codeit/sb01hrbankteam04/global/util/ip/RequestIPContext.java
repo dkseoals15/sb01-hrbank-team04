@@ -1,4 +1,4 @@
-package com.codeit.sb01hrbankteam04.global.util;
+package com.codeit.sb01hrbankteam04.global.util.ip;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
