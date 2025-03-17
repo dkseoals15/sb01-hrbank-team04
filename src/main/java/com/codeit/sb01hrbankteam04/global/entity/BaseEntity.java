@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import java.time.Instant;
 import lombok.Getter;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 
 /**
@@ -24,6 +25,7 @@ public abstract class BaseEntity {
 
   @CreatedDate
   @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
+  @NotAudited
   private Instant createdAt;
 
 }

@@ -15,7 +15,6 @@ spring:
       org.hibernate.envers.revision_field_name: revisionId
       org.hibernate.envers.revision_type_field_name: revtype
       org.hibernate.envers.store_data_at_delete: true
-      org.hibernate.envers.global_with_modified_flag: true  # 변경된 필드 추적 활성화
 
   transaction:
     default-timeout: 30

@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.envers.RevisionEntity;
@@ -28,7 +29,7 @@ public class EmployeeHistory {
 
   @Column
   @RevisionTimestamp
-  private Long createdAt; // 엔티티 변경 시간
+  private Instant createdAt; // 엔티티 변경 시간
 
   @Column
   private String memo;
