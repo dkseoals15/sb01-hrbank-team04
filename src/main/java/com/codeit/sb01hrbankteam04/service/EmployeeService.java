@@ -38,7 +38,6 @@ public class EmployeeService {
   public List<EmployeeDistributionResponse> getEmployeeDistribution(String groupBy, Status status) {
     List<EmployeeDistributionResponse> distributionList;
     long totalEmployees = employeeRepository.countByStatus(status); // 전체 직원 수 조회
-
     if ("department".equalsIgnoreCase(groupBy)) {
       distributionList = employeeRepository.findEmployeeCountByDepartment(status)
           .stream()

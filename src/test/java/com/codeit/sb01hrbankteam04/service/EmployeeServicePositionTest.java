@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 @SpringBootTest
 public class EmployeeServicePositionTest {
@@ -80,13 +81,30 @@ public class EmployeeServicePositionTest {
 
       // ✅ 직급 배정
       employee.setPosition(position);
-
       employee.setStatus(Status.ACTIVE);
       employee.setDepartment(department);
       employee.setJoinedAt(
           LocalDate.of(2023, 1, (i % 28) + 1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
       employeeRepository.save(employee);
     }
+
+    for (int i = 1; i <= 5; i++) {
+      Employee employee = new Employee();
+      employee.setName(position + "2 " + department.getName() + " Employee " + i);
+      employee.setEmail(position.toLowerCase() + "2." + department.getName().toLowerCase() + i + "@example.com");
+
+      // ✅ 유니크한 직원 코드 생성
+      employee.setCode("EMP_" + position.substring(0, 2).toUpperCase() + "2_" + i + "_" + System.nanoTime());
+
+      // ✅ 직급 배정
+      employee.setPosition(position);
+      employee.setStatus(Status.ON_LEAVE);
+      employee.setDepartment(department);
+      employee.setJoinedAt(
+          LocalDate.of(2023, 1, (i % 28) + 1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+      employeeRepository.save(employee);
+    }
+
   }
 
   @Test
@@ -115,16 +133,53 @@ public class EmployeeServicePositionTest {
       assertThat(response.getCount()).isEqualTo(expectedResponse.getCount());
 
       // ✅ 소수점 두 자리 이하 버리고 정수형 비교
-      int actualPercentage = (int) response.getPercentage(); // 실수 → 정수 변환
+      int actualPercentage = (int) response.getPercentage();
       int expectedPercentage = (int) expectedResponse.getPercentage();
 
       assertThat(actualPercentage).isEqualTo(expectedPercentage);
+
+    }
+  }
+  @Test
+  public void 상태별_직원_분포_조회(){
+    // ✅ position 기준 직원 분포 조회
+    List<EmployeeDistributionResponse> positionDistribution2 = employeeService.getEmployeeDistribution(
+        "position", Status.ON_LEAVE);
+
+    // ✅ 기대되는 직급별 직원 수 및 비율 (정확한 직원 수 반영)
+    Map<String, EmployeeDistributionResponse> expectedPosition2 = Map.of(
+        "부장", new EmployeeDistributionResponse("부장", 25, 25),
+        "과장", new EmployeeDistributionResponse("과장", 25, 25),
+        "대리", new EmployeeDistributionResponse("대리", 25, 25),
+        "사원", new EmployeeDistributionResponse("사원", 25, 25)
+    );
+
+    // ✅ 검증: 4개 직급(부장, 과장, 대리, 사원)만 존재하는지 확인
+    assertThat(positionDistribution2).hasSize(4);
+
+    // ✅ 검증: 각 직급별 직원 수 및 비율 확인
+    for (EmployeeDistributionResponse response2 : positionDistribution2) {
+      String groupName2 = response2.getGroupKey();
+      assertThat(expectedPosition2).containsKey(groupName2);
+
+      EmployeeDistributionResponse expectedResponse2 = expectedPosition2.get(groupName2);
+      assertThat(response2.getCount()).isEqualTo(expectedResponse2.getCount());
+
+      // ✅ 소수점 두 자리 이하 버리고 정수형 비교
+      int actualPercentage2 = (int) response2.getPercentage();
+      int expectedPercentage2 = (int) expectedResponse2.getPercentage();
+
+      assertThat(actualPercentage2).isEqualTo(expectedPercentage2);
+
     }
 
     // ✅ 콘솔 출력 (디버깅용)
-    System.out.println("positionDistribution = " + positionDistribution);
+    System.out.println("positionDistribution2 = " + positionDistribution2);
   }
-
-
+  @Test
+  public void 전체_직원_수(){
+    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(null, null, null);
+    assertThat(employeeCount.getBody()).isEqualTo(160); // ON_LEAVE - 100, ACTIVE - 60
+  }
 
 }
