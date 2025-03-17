@@ -16,7 +16,6 @@ public class IPUtils {
         "X-RealIP"
     );
 
-    // Check for the "X-Forwarded-For" header first
     for (String header : headers) {
       String ip = request.getHeader(header);
       if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
