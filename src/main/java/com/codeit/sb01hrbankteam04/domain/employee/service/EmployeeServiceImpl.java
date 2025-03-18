@@ -63,8 +63,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         .joinedAt(Instant.now())
         .profile(nullableProfile)
         .build();
+
     employeeRepository.save(employee);
-    return null;
+    return employeeMapper.toDto(employee);
   }
 
 
@@ -74,19 +75,31 @@ public class EmployeeServiceImpl implements EmployeeService {
             .map(employeeMapper::toDto)
             .orElseThrow(()-> new NoSuchElementException("no such employee with id "  + id));
   }
+
   @Override
   public List<EmployeeResponse> findAll() {
-    return List.of();
+    return employeeRepository.findAll()
+        .stream()
+        .map(employeeMapper::toDto)
+        .toList();
   }
 
   @Override
   public EmployeeResponse update(Long id, EmployeeUpdateRequest employeeUpdateRequest,
       Optional<FileDto> proile) {
+    Employee employee = employeeRepository.findById(id)
+        .orElseThrow(()-> new NoSuchElementException("no such employee with id " + id));
+
+
+
     return null;
   }
 
   @Override
   public void delete(Long id) {
-
+    if(!employeeRepository.existsById(id)) {
+      throw new NoSuchElementException("no such employee with id " + id);
+    }
+    employeeRepository.deleteById(id);
   }
 }
