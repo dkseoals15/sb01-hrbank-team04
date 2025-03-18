@@ -9,11 +9,14 @@ import lombok.*;
 import java.time.Instant;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 @Entity
 @Table(name = "employee")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Audited
 public class Employee extends BaseEntity {
 
   @Column(nullable = false, length = 20)
@@ -31,6 +34,7 @@ public class Employee extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "department_id", foreignKey = @ForeignKey(name = "fk_department"))
   @OnDelete(action= OnDeleteAction.SET_NULL)
+  @NotAudited
   private Department department;
 
   @Column(nullable = false, length = 50)
@@ -42,6 +46,7 @@ public class Employee extends BaseEntity {
   @OneToOne
   @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"))
   @OnDelete(action= OnDeleteAction.SET_NULL)
+  @NotAudited
   private File profile;
 
   public Employee(EmployeeStatusType status, String name,String email, String code,

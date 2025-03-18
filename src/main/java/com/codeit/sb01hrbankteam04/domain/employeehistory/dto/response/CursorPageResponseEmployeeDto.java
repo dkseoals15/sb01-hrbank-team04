@@ -1,4 +1,4 @@
-package com.codeit.sb01hrbankteam04.domain.employeehistory.dto;
+package com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response;
 
 import java.util.List;
 import lombok.Builder;
