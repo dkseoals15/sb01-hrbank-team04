@@ -26,7 +26,7 @@ public class Employee extends BaseEntity {
 
   @Column(nullable = false, unique = true, length = 70)
   private String email;
-  //TODO: 코드 부여 로직 필요
+
   @Column(nullable = false, unique = true, length = 30)
   private String code;
 

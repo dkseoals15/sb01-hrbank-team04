@@ -12,6 +12,7 @@ import com.codeit.sb01hrbankteam04.domain.employee.repository.FileRepository;
 import com.codeit.sb01hrbankteam04.domain.file.File;
 import com.codeit.sb01hrbankteam04.domain.file.FileDto;
 import com.codeit.sb01hrbankteam04.domain.mapper.EmployeeMapper;
+import jakarta.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -30,27 +31,38 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
 
+  //파일 저장 로직 + 직원 등록 로직 트랜잭션 관리
+  @Transactional
   @Override
   public EmployeeResponse create(EmployeeCreateRequest employeeCreateRequest,
-      Optional<FileDto> profileRequest) {
+      Optional<FileDto> optionalProfileRequest) {
 
-    //temp department
+    //부서 찾기
     Department department = departmentRepository.findById(employeeCreateRequest.departmentId())
         .orElseThrow(() -> new NoSuchElementException("Department not found"));
 
-    File profile = fileRepository.findIdByName(profileRequest.)
+    //파일 저장
+    File nullableProfile = optionalProfileRequest
+        .map(profileRequst -> {
+          String filename = profileRequst.Filename();
+          String contentType = profileRequst.ContentType();
+          byte[] bytes = profileRequst.Bytes();
+          File file = new File(filename, contentType, (long) bytes.length);
+          fileRepository.save(file);
+          return file;
+        })
+        .orElse(null);
 
     Employee employee = Employee.builder()
         .status(EmployeeStatusType.재직중)
         .name(employeeCreateRequest.name())
         .email(employeeCreateRequest.email())
-        .code("2025-TEMPCODE")
+        .code("2025-TEMPCODE") //TODO: 코드 생성 로직 추가해야함
         .department(department)
         .position(employeeCreateRequest.position())
         .joinedAt(Instant.now())
-        .profile(profile)
+        .profile(nullableProfile)
         .build();
-    System.out.println(employeeMapper.toDto(employee));
     employeeRepository.save(employee);
     return null;
   }

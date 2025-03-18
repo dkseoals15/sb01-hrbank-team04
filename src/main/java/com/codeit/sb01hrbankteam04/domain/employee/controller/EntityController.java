@@ -2,12 +2,16 @@ package com.codeit.sb01hrbankteam04.domain.employee.controller;
 
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeCreateRequest;
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeResponse;
+import com.codeit.sb01hrbankteam04.domain.employee.repository.FileRepository;
 import com.codeit.sb01hrbankteam04.domain.employee.service.EmployeeService;
+import com.codeit.sb01hrbankteam04.domain.file.File;
 import com.codeit.sb01hrbankteam04.domain.file.FileDto;
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,15 +27,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class EntityController {
 
   private final EmployeeService employeeService;
+  private final FileRepository fileRepository;
 
-  @PostMapping(consumes = "multipart/form-data")
+  @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ResponseEntity<EmployeeResponse> createEmployee(
       @RequestPart("employeeCreateRequest")EmployeeCreateRequest employeeCreateRequest,
       @RequestPart(value ="profile", required = false)MultipartFile profile
   ){
     Optional<FileDto> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
-    //profileRequest 필요 -file
+
     EmployeeResponse createdEmployee =employeeService.create(employeeCreateRequest,profileRequest);
     return ResponseEntity
         .status(HttpStatus.CREATED)
