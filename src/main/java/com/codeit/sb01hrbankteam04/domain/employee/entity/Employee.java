@@ -1,7 +1,7 @@
 package com.codeit.sb01hrbankteam04.domain.employee.entity;
 
 import com.codeit.sb01hrbankteam04.domain.department.Department;
-import com.codeit.sb01hrbankteam04.domain.file.File;
+import com.codeit.sb01hrbankteam04.domain.file.entity.File;
 import com.codeit.sb01hrbankteam04.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
