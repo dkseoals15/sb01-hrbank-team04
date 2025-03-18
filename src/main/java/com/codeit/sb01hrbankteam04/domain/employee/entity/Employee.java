@@ -13,10 +13,12 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "employee")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Employee extends BaseEntity {
 
   @Column(nullable = false, length = 20)
+  @Enumerated(EnumType.STRING)//Enumerated 어노테이션 추가
   private EmployeeStatusType status;
 
   @Column(nullable = false, length = 100)
@@ -24,7 +26,7 @@ public class Employee extends BaseEntity {
 
   @Column(nullable = false, unique = true, length = 70)
   private String email;
-
+  //TODO: 코드 부여 로직 필요
   @Column(nullable = false, unique = true, length = 30)
   private String code;
 

@@ -1,13 +1,23 @@
 package com.codeit.sb01hrbankteam04.domain.employee.service;
 
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeCreateRequest;
-import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeDto;
-import com.codeit.sb01hrbankteam04.domain.file.FileCreateRequest;
+import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeResponse;
+import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeUpdateRequest;
+import com.codeit.sb01hrbankteam04.domain.file.FileDto;
+import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeService {
 
-  public EmployeeDto create(EmployeeCreateRequest employeeCreateRequest, Optional<FileCreateRequest> profileRequest);
+  EmployeeResponse create(EmployeeCreateRequest employeeCreateRequest, Optional<FileDto> profile);
 
+  EmployeeResponse find(Long id);
+
+  List<EmployeeResponse> findAll();
+
+  EmployeeResponse update(Long id, EmployeeUpdateRequest employeeUpdateRequest,
+      Optional<FileDto> proile);
+
+  void delete(Long id);
 
 }

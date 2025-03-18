@@ -3,8 +3,10 @@ package com.codeit.sb01hrbankteam04.domain.employee.dto;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import lombok.Getter;
 
-public class EmployeeDto {
+@Getter
+public class EmployeeResponse {
   private Long id;
   private String name;
   private String email;
@@ -16,11 +18,9 @@ public class EmployeeDto {
   private String status;
   private Long profileImageId;
 
-  public EmployeeDto() {
-  }
 
   // `Instant`를 받아서 `hireDate` 필드에 변환된 값 저장하는 생성자 추가
-  public EmployeeDto(Long id, String name, String email, String employeeNumber,
+  public EmployeeResponse(Long id, String name, String email, String employeeNumber,
       Long departmentId, String departmentName, String position,
       Instant hireDate, String status, Long profileImageId) {
     this.id = id;
@@ -35,6 +35,7 @@ public class EmployeeDto {
     this.profileImageId = profileImageId;
   }
 
+
   // Instant → yyyy-MM-dd 문자열 변환하는 메서드
   private String formatHireDate(Instant hireDate) {
     if (hireDate == null) return null;
@@ -42,4 +43,20 @@ public class EmployeeDto {
         .withZone(ZoneId.systemDefault()); // 시스템 시간대 기준
     return formatter.format(hireDate);
   }
-}
+
+  public String toString() {
+    return "EmployeeResponse{" +
+        "id=" + id +
+        ", name='" + name + '\'' +
+        ", email='" + email + '\'' +
+        ", code='" + employeeNumber + '\'' +
+        ", departmentId=" + departmentId +
+        ", departmentName='" + departmentName + '\'' +
+        ", position='" + position + '\'' +
+        ", hireDate=" + hireDate +
+        ", status='" + status + '\'' +
+        ", profileImageId=" + profileImageId +
+        '}';
+
+    }
+  }

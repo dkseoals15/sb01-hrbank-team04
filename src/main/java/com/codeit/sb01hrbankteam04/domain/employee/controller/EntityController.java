@@ -1,17 +1,16 @@
 package com.codeit.sb01hrbankteam04.domain.employee.controller;
 
-import com.codeit.sb01hrbankteam04.domain.employee.controller.api.EmployeeApi;
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeCreateRequest;
-import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeDto;
+import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeResponse;
 import com.codeit.sb01hrbankteam04.domain.employee.service.EmployeeService;
-import com.codeit.sb01hrbankteam04.domain.file.FileCreateRequest;
+import com.codeit.sb01hrbankteam04.domain.file.FileDto;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.ssl.SslProperties.Bundles.Watch.File;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -21,32 +20,46 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/employees")
 @RequiredArgsConstructor
-public class EntityController implements EmployeeApi {
+public class EntityController {
 
   private final EmployeeService employeeService;
 
-  @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  @Override
-  public ResponseEntity<EmployeeDto> createEmployee(
+  @PostMapping(consumes = "multipart/form-data")
+  public ResponseEntity<EmployeeResponse> createEmployee(
       @RequestPart("employeeCreateRequest")EmployeeCreateRequest employeeCreateRequest,
       @RequestPart(value ="profile", required = false)MultipartFile profile
   ){
-    Optional<FileCreateRequest> profileRequest = Optional.ofNullable(profile)
+    Optional<FileDto> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
     //profileRequest 필요 -file
-    EmployeeDto createdEmployee =employeeService.create(employeeCreateRequest,profileRequest);
+    EmployeeResponse createdEmployee =employeeService.create(employeeCreateRequest,profileRequest);
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(createdEmployee);
 
   }
 
-  private Optional<FileCreateRequest> resolveProfileRequest(MultipartFile profileFile) {
+
+  @GetMapping("/{id}")
+  public ResponseEntity<EmployeeResponse> find(@PathVariable Long id) {
+    EmployeeResponse employee = employeeService.find(id);
+
+    if (employee == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(employee);
+  }
+
+
+  private Optional<FileDto> resolveProfileRequest(MultipartFile profileFile) {
     if (profileFile.isEmpty()) {
       return Optional.empty();
     } else {
       try {
-        FileCreateRequest binaryContentCreateRequest = new FileCreateRequest(
+        FileDto binaryContentCreateRequest = new FileDto(
             profileFile.getOriginalFilename(),
             profileFile.getContentType(),
             profileFile.getBytes()
