@@ -13,13 +13,11 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "employee")
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Employee extends BaseEntity {
 
   @Column(nullable = false, length = 20)
-  private String status;
+  private EmployeeStatusType status;
 
   @Column(nullable = false, length = 100)
   private String name;
@@ -45,4 +43,17 @@ public class Employee extends BaseEntity {
   @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"))
   @OnDelete(action= OnDeleteAction.SET_NULL)
   private File profile;
+
+  public Employee(EmployeeStatusType status, String name,String email, String code,
+      Department department, String position,Instant joinedAt, File profile) {
+    this.status = status;
+    this.name = name;
+    this.email = email;
+    this.code = code;
+    this.department = department;
+    this.position = position;
+    this.joinedAt = joinedAt;
+    this.profile = profile;
+  }
+
 }
