@@ -18,6 +18,12 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
+hrbank:
+  storage:
+    type: local
+    local:
+      root-path: temp
+
 server:
   port: 8080
   tomcat:
