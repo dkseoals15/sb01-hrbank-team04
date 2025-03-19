@@ -46,41 +46,6 @@ public class EmployeeServiceImpl implements EmployeeService {
   private final EmployeeMapper employeeMapper;
 
 
-  public EmployeePageResponse getEmployees(
-      String nameOrEmail, String employeeNumber, String departmentName, String position,
-      String hireDateFrom, String hireDateTo, String status,
-      Long nextIdAfter, String cursor, String sortBy, int size) {
-
-    // 페이지
-    Pageable pageable = PageRequest.of(0, size);
-
-    // 직원 목록 조회
-    List<Employee> employees = employeeRepository.findEmployeesByCursor(
-        nameOrEmail, employeeNumber, departmentName, position,
-        hireDateFrom, hireDateTo, status, nextIdAfter, sortBy, pageable);
-
-
-    List<EmployeeResponse> EmployeeResponses = employees.stream()
-        .map(employeeMapper::toDto)
-        .collect(Collectors.toList());
-
-    // 다음 페이지 정보
-    Long lastId = employees.isEmpty() ? null : employees.get(employees.size() - 1).getId();
-    String nextCursor = lastId != null ? encodeCursor(lastId) : null;
-    boolean hasNext = employees.size() == size;
-
-    Long totalElements = employeeRepository.count();
-    // 결과 반환
-    return EmployeePageResponse.from(
-        EmployeeResponses, nextCursor, lastId, size, totalElements, hasNext);
-  }
-
-  // Cursor value to Base64 인코딩
-  private String encodeCursor(Long id) {
-    return Base64.getEncoder().encodeToString(("{\"id\":" + id + "}").getBytes(StandardCharsets.UTF_8));
-  }
-
-
 
   //파일 저장 로직 + 직원 등록 로직 트랜잭션 관리
   @Transactional
@@ -131,6 +96,58 @@ public class EmployeeServiceImpl implements EmployeeService {
     Instant instant = localDate.atStartOfDay(ZoneId.of("Asia/Seoul")).toInstant();
     return instant;
   }
+
+
+  public EmployeePageResponse getEmployees(
+      String nameOrEmail, String employeeNumber, String departmentName, String position,
+      String hireDateFrom, String hireDateTo, String status,
+      Long nextIdAfter, String cursor, String sortBy, int size) {
+
+    // Pageable 객체를 생성
+    Pageable pageable = PageRequest.of(0, size);
+
+    //TODO: 커서 적용
+
+    // nextIdAfter를 구할 때, 커서 값이 있을 경우, 이를 통해 nextIdAfter 값을 결정
+    Long nextId = (cursor != null) ? decodeCursor(cursor) : nextIdAfter;
+
+
+    List<Employee> employees = employeeRepository.findEmployeesByCursor(
+        nameOrEmail, employeeNumber, departmentName, position,
+        hireDateFrom, hireDateTo, status, nextIdAfter, sortBy, pageable);
+
+    // pageResponse  dto로 변환
+    List<EmployeeResponse> EmployeeResponses = employees.stream()
+        .map(employeeMapper::toDto)
+        .collect(Collectors.toList());
+
+    // next page
+    Long lastId = employees.isEmpty() ? null : employees.get(employees.size() - 1).getId();//nextIdAfter
+    String nextCursor = lastId != null ? encodeCursor(lastId) : null;
+    boolean hasNext = employees.size() == size;
+
+    Long totalElements = employeeRepository.count();
+
+    return EmployeePageResponse.from(
+        EmployeeResponses, nextCursor, lastId, size, totalElements, hasNext);
+  }
+
+  // 커서 인코딩
+  private String encodeCursor(Long id) {
+    return Base64.getEncoder().encodeToString(("{\"id\":" + id + "}").getBytes(StandardCharsets.UTF_8));
+  }
+
+  // 커서 값 디코딩
+  public static Long decodeCursor(String cursor) {
+    if (cursor == null || cursor.isEmpty()) {
+      return null;
+    }
+
+    // Base64로 디코딩 후 Long 값으로 변환
+    String decodedString = new String(Base64.getDecoder().decode(cursor));
+    return Long.valueOf(decodedString);
+  }
+
 
   @Override
   public EmployeeResponse find(Long id) {
@@ -207,6 +224,7 @@ public class EmployeeServiceImpl implements EmployeeService {
       fileRepository.deleteById(employee.getProfile().getId());
     }
 
+    //TODO:
     employeeRepository.deleteById(id);
   }
 }
