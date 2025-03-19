@@ -31,10 +31,7 @@ public class EmployeeRepositoryInitTest {
     employeeRepository.deleteAll();
     departmentRepository.deleteAll();
 
-    department = new Department();
-    department.setName("Finance");
-    department.setDescription("Handles financial matters");
-    department.setEstablishedAt(Instant.now());
+    department = new Department("Finance", "Handles financial matters", Instant.now());
     department = departmentRepository.save(department);
   }
 

@@ -1,41 +1,37 @@
 package com.codeit.sb01hrbankteam04.domain.department;
 
-import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
-import jakarta.persistence.*;
+import com.codeit.sb01hrbankteam04.global.entity.BaseUpdatableEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import java.time.Instant;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import java.util.List;
-import java.time.Instant;
 
+// TODO: 임시로 복사해 둔 것
 @Entity
+@Table(name = "department")
 @Getter
-@Setter
-@NoArgsConstructor
-@Table(name = "departments", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "name")
-})
-public class Department {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+public class Department extends BaseUpdatableEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private Instant createdAt = Instant.now();
-
-  @Column(name = "updated_at", nullable = false)
-  private Instant updatedAt = Instant.now();
-
-  @Column(name = "name", length = 100, nullable = false, unique = true)
+  @Column(nullable = false, unique = true, length = 100)
   private String name;
 
-  @Column(name = "description", length = 200)
+  @Column(nullable = false, length = 200)
   private String description;
 
-  @Column(name = "established_at")
-  private Instant establishedAt;
+  @Column(name = "established_at", nullable = false)
+  private Instant establishedDate;
 
-  @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Employee> employees;
+  public void updateDepartment(String name, String description, Instant establishedDate) {
+    this.name = name;
+    this.description = description;
+    this.establishedDate = establishedDate;
+  }
 }

@@ -34,11 +34,7 @@ public class EmployeeServiceGetEmployeeCountTest {
     employeeRepository.deleteAll(); // 기존 데이터 초기화
     departmentRepository.deleteAll();
 
-    department = new Department();
-    department.setName("Finance");
-    department.setDescription("Handles financial matters");
-    department.setEstablishedAt(
-        LocalDate.now().minusYears(10).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+    department = new Department("Finance", "Handles financial matters", LocalDate.now().minusYears(10).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
     department = departmentRepository.save(department);
 
     Employee employee1 = new Employee(EmployeeStatusType.ACTIVE, "John Doe", "john.doe@example.com", "EMP123", department, "부장", LocalDate.of(2023, 1, 10).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
