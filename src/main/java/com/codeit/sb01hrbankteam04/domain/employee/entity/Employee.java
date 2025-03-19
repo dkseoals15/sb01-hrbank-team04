@@ -2,8 +2,9 @@ package com.codeit.sb01hrbankteam04.domain.employee.entity;
 
 import com.codeit.sb01hrbankteam04.domain.department.Department;
 import com.codeit.sb01hrbankteam04.domain.file.File;
-import com.codeit.sb01hrbankteam04.global.entity.BaseEntity;
+import com.codeit.sb01hrbankteam04.global.entity.BaseUpdatableEntity;
 import jakarta.persistence.*;
+import java.util.Optional;
 import lombok.*;
 
 import java.time.Instant;
@@ -15,7 +16,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Employee extends BaseEntity {
+public class Employee extends BaseUpdatableEntity {
 
   @Column(nullable = false, length = 20)
   @Enumerated(EnumType.STRING)//Enumerated 어노테이션 추가
@@ -41,8 +42,8 @@ public class Employee extends BaseEntity {
   @Column(nullable = false)
   private Instant joinedAt;
 
-  @OneToOne
-  @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"))
+  @OneToOne(optional = true)
+  @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"), nullable = true)
   @OnDelete(action= OnDeleteAction.SET_NULL)
   private File profile;
 
@@ -55,6 +56,17 @@ public class Employee extends BaseEntity {
     this.department = department;
     this.position = position;
     this.joinedAt = joinedAt;
+    this.profile = profile;
+  }
+
+  public void update(String name,String email, Department department, String position,
+      Instant joinedAt, EmployeeStatusType status, File profile){
+    this.name = name;
+    this.email = email;
+    this.department = department;
+    this.position = position;
+    this.joinedAt = joinedAt;
+    this.status = status;
     this.profile = profile;
   }
 

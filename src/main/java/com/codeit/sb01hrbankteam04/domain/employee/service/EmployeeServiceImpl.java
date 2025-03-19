@@ -14,9 +14,14 @@ import com.codeit.sb01hrbankteam04.domain.file.FileDto;
 import com.codeit.sb01hrbankteam04.domain.mapper.EmployeeMapper;
 import jakarta.transaction.Transactional;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import javax.management.InstanceAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +65,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         .code("2025-TEMPCODE") //TODO: 코드 생성 로직 추가해야함
         .department(department)
         .position(employeeCreateRequest.position())
-        .joinedAt(Instant.now())
+        .joinedAt(dateToInstant(employeeCreateRequest.hireDate()))
         .profile(nullableProfile)
         .build();
 
@@ -68,6 +73,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     return employeeMapper.toDto(employee);
   }
 
+  //"yyyy-MM-dd" String을 Instant로 변환하는 코드
+  private Instant dateToInstant(String date) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    //문자열을 localDate 변환
+    LocalDate localDate = LocalDate.parse(date, formatter);
+
+    //LocalDate를 Instant 형식으로 변환, (00:00 UT
+    return localDate.atStartOfDay(ZoneId.of("UTC")).toInstant();
+  }
 
   @Override
   public EmployeeResponse find(Long id) {
@@ -84,15 +99,51 @@ public class EmployeeServiceImpl implements EmployeeService {
         .toList();
   }
 
+  @Transactional
   @Override
   public EmployeeResponse update(Long id, EmployeeUpdateRequest employeeUpdateRequest,
-      Optional<FileDto> proile) {
+      Optional<FileDto> optionalProfileRequest) throws InstanceAlreadyExistsException {
     Employee employee = employeeRepository.findById(id)
         .orElseThrow(()-> new NoSuchElementException("no such employee with id " + id));
 
+    String newEmail= employeeUpdateRequest.email();
+    //이메일 검증
+    if(employeeRepository.existsByEmail(newEmail)) {
+      throw new InstanceAlreadyExistsException("email exists: " + newEmail);
+    }
+
+    //근무 상태의 enum 일치 방어 처리
+    if(!Arrays.stream(EmployeeStatusType.values())
+        .anyMatch(status -> status.name().equals(employeeUpdateRequest.status()))){
+      throw new NoSuchElementException("no such employee status: " + employeeUpdateRequest.status());
+    }
+    EmployeeStatusType newStatus = EmployeeStatusType.valueOf(employeeUpdateRequest.status());
 
 
-    return null;
+    //부서 찾기
+    Department newDepartment = departmentRepository.findById(employeeUpdateRequest.departmentId())
+        .orElseThrow(() -> new NoSuchElementException("Department not found"));
+
+    //파일 저장
+    File nullableProfile = optionalProfileRequest
+        .map(profileRequst -> {
+          String filename = profileRequst.Filename();
+          String contentType = profileRequst.ContentType();
+          byte[] bytes = profileRequst.Bytes();
+          File file = new File(filename, contentType, (long) bytes.length);
+          fileRepository.save(file);
+          return file;
+        })
+        .orElse(null);
+
+    String newName= employeeUpdateRequest.name();
+    String newPosition= employeeUpdateRequest.position();
+    Instant newHireDate = dateToInstant(employeeUpdateRequest.hireDate());
+
+    employee.update(newName,newEmail,newDepartment,newPosition,newHireDate,newStatus, nullableProfile);
+
+    employeeRepository.save(employee);
+    return employeeMapper.toDto(employee);
   }
 
   @Override

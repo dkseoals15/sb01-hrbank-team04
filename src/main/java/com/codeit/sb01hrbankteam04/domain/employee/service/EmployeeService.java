@@ -7,6 +7,7 @@ import com.codeit.sb01hrbankteam04.domain.file.File;
 import com.codeit.sb01hrbankteam04.domain.file.FileDto;
 import java.util.List;
 import java.util.Optional;
+import javax.management.InstanceAlreadyExistsException;
 
 public interface EmployeeService {
 
@@ -17,7 +18,7 @@ public interface EmployeeService {
   List<EmployeeResponse> findAll();
 
   EmployeeResponse update(Long id, EmployeeUpdateRequest employeeUpdateRequest,
-      Optional<FileDto> proile);
+      Optional<FileDto> proile) throws InstanceAlreadyExistsException;
 
   void delete(Long id);
 
