@@ -3,7 +3,6 @@ package com.codeit.sb01hrbankteam04.domain.employee.entity;
 import com.codeit.sb01hrbankteam04.domain.department.Department;
 import com.codeit.sb01hrbankteam04.domain.file.entity.File;
 import com.codeit.sb01hrbankteam04.global.entity.BaseEntity;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,7 +43,6 @@ public class Employee extends BaseEntity {
   @OneToOne
   @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"))
   @OnDelete(action= OnDeleteAction.SET_NULL)
-  @Nullable
   private File profile;
 
   public Employee(EmployeeStatusType status, String name,String email, String code,
