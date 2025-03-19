@@ -8,6 +8,7 @@ import com.codeit.sb01hrbankteam04.domain.employeehistory.repository.EmployeeCha
 import com.codeit.sb01hrbankteam04.domain.employeehistory.type.ModifyType;
 import jakarta.persistence.EntityManager;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -50,9 +51,9 @@ public class EmployeeHistoryController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping("/{revisionId}/diffs")
-  public ResponseEntity<List<DiffDto>> getRevisionDetails(@PathVariable("revisionId") Long revisionId) {
-    List<DiffDto> diffs = repository.getRevisionDetails(revisionId);
+  @GetMapping("/{id}/diffs")
+  public ResponseEntity<List<DiffDto>> getRevisionDetails(@PathVariable("id") Long id) {
+    List<DiffDto> diffs = repository.getRevisionDetails(id);
     return ResponseEntity.ok(diffs);
   }
 
@@ -65,6 +66,13 @@ public class EmployeeHistoryController {
       @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) Instant atFrom,
       @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) Instant atTo
   ) {
+
+    Instant now = Instant.now();
+    if (atFrom == null && atTo == null) {
+      atFrom = now.minus(7, ChronoUnit.DAYS);
+      atTo = now;
+    }
+
     FilterRequest filterRequest = new FilterRequest(employeeNumber, type, memo, ipAddress, atFrom, atTo);
 
     Long count = repository.countChangeLogs(filterRequest);
