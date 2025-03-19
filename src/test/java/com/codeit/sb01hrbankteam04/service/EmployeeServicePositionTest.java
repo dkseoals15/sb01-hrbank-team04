@@ -188,5 +188,10 @@ public class EmployeeServicePositionTest {
     ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(null, null, null);
     assertThat(employeeCount.getBody()).isEqualTo(160); // ON_LEAVE - 100, ACTIVE - 60
   }
+  @Test
+  public void ON_LEAVE_직원_수(){
+    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(Status.ON_LEAVE, null, null);
+    assertThat(employeeCount.getBody()).isEqualTo(100); // ON_LEAVE - 100, ACTIVE - 60
+  }
 
 }
