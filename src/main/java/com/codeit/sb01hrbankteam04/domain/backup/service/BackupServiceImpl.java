@@ -194,7 +194,7 @@ public class BackupServiceImpl implements BackupService {
   private File makeErrorLog(Long backupId, String errorMessage) {
     Logger logger = Logger.getLogger(String.valueOf(BackupService.class));
 
-    // 2️⃣ Logger의 출력 내용을 StringBuilder로 변환
+    // Logger의 출력 내용을 StringBuilder로 변환
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     PrintStream printStream = new PrintStream(outputStream, true, StandardCharsets.UTF_8);
 
@@ -209,7 +209,7 @@ public class BackupServiceImpl implements BackupService {
     File f = new File(filename, "text/plain", (long) log.toString().length());
     File saveLog = fileStorage.put(f, outputStream.toByteArray());
 
-    // 3️⃣ LocalFileStorage를 사용하여 로그 파일 저장
+    //  ️LocalFileStorage를 사용하여 로그 파일 저장
     return saveLog;
   }
 }

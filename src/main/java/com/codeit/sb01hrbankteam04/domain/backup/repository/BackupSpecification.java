@@ -48,7 +48,7 @@ public class BackupSpecification {
       if (requestDto.cursor() != null) {
         Instant cursorInstant;
         try {
-          cursorInstant = Instant.parse(requestDto.cursor());  // ✅ String → Instant 변환
+          cursorInstant = Instant.parse(requestDto.cursor());  // String → Instant 변환
           predicates.add(criteriaBuilder.lessThan(root.get("startedAt"), cursorInstant));
         } catch (Exception e) {
           System.err.println("Invalid cursor format: " + requestDto.cursor());
