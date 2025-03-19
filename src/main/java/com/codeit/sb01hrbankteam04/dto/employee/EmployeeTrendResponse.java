@@ -11,7 +11,16 @@ import lombok.NoArgsConstructor;
 public class EmployeeTrendResponse {
   LocalDate date;
   int count;
-  int chaange;
+  int change;
   double changeRate;
 
+  @Override
+  public String toString() {
+    return "EmployeeTrendResponse{" +
+        "date=" + date +
+        ", count=" + count +
+        ", change=" + change +
+        ", changeRate=" + changeRate +
+        '}';
+  }
 }

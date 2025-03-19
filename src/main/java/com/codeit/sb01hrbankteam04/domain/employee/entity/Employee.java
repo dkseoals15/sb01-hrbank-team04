@@ -1,8 +1,9 @@
 package com.codeit.sb01hrbankteam04.domain.employee.entity;
 
 import com.codeit.sb01hrbankteam04.domain.department.Department;
-import com.codeit.sb01hrbankteam04.domain.file.File;
+import com.codeit.sb01hrbankteam04.domain.file.entity.File;
 import com.codeit.sb01hrbankteam04.global.entity.BaseEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Employee extends BaseEntity {
 
   @Column(nullable = false, length = 20)
+  @Setter
   private EmployeeStatusType status;
 
   @Column(nullable = false, length = 100)
@@ -39,9 +41,15 @@ public class Employee extends BaseEntity {
   @Column(nullable = false)
   private Instant joinedAt;
 
+  /*
+  @Column(nullable = true)
+  @Setter //임시
+  private Instant updatedAt;*/
+
   @OneToOne
   @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"))
   @OnDelete(action= OnDeleteAction.SET_NULL)
+  @Nullable
   private File profile;
 
   public Employee(EmployeeStatusType status, String name,String email, String code,

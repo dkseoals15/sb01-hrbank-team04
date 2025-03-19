@@ -1,6 +1,6 @@
 package com.codeit.sb01hrbankteam04.dto.employee;
 
-import com.codeit.sb01hrbankteam04.model.Employee;
+import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

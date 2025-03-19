@@ -1,5 +1,6 @@
-package com.codeit.sb01hrbankteam04.model;
+package com.codeit.sb01hrbankteam04.domain.department;
 
+import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

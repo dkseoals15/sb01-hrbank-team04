@@ -2,12 +2,13 @@ package com.codeit.sb01hrbankteam04.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
+import com.codeit.sb01hrbankteam04.domain.employee.entity.EmployeeStatusType;
+import com.codeit.sb01hrbankteam04.domain.employee.repository.EmployeeRepository;
+import com.codeit.sb01hrbankteam04.domain.employee.service.EmployeeService;
 import com.codeit.sb01hrbankteam04.dto.employee.EmployeeDistributionResponse;
-import com.codeit.sb01hrbankteam04.model.Department;
-import com.codeit.sb01hrbankteam04.model.Employee;
-import com.codeit.sb01hrbankteam04.model.Status;
+import com.codeit.sb01hrbankteam04.domain.department.Department;
 import com.codeit.sb01hrbankteam04.repository.DepartmentRepository;
-import com.codeit.sb01hrbankteam04.repository.EmployeeRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 
 @SpringBootTest
 public class EmployeeServicePositionTest {
+
   @Autowired
   private EmployeeService employeeService;
 
@@ -42,6 +44,7 @@ public class EmployeeServicePositionTest {
         LocalDate.now().minusYears(yearsOld).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
     return departmentRepository.save(department);
   }
+
   @BeforeEach
   void setUp() {
     employeeRepository.deleteAll(); // 기존 데이터 초기화
@@ -72,37 +75,39 @@ public class EmployeeServicePositionTest {
 
   private void addEmployeesByPosition(Department department, String position, int count) {
     for (int i = 1; i <= count; i++) {
-      Employee employee = new Employee();
-      employee.setName(position + " " + department.getName() + " Employee " + i);
-      employee.setEmail(position.toLowerCase() + "." + department.getName().toLowerCase() + i + "@example.com");
-
-      // ✅ 유니크한 직원 코드 생성
-      employee.setCode("EMP_" + position.substring(0, 2).toUpperCase() + "_" + i + "_" + System.nanoTime());
-
-      // ✅ 직급 배정
-      employee.setPosition(position);
-      employee.setStatus(Status.ACTIVE);
-      employee.setDepartment(department);
-      employee.setJoinedAt(
-          LocalDate.of(2023, 1, (i % 28) + 1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+      Employee employee = new Employee(
+          EmployeeStatusType.재직중, // 상태 설정 (예: EmployeeStatusType.재직중, 휴직중 등)
+          position + " " + department.getName() + " Employee " + i, // 이름 설정
+          position.toLowerCase() + "." + department.getName().toLowerCase() + i + "@example.com",
+          // 이메일 설정
+          "EMP_" + position.substring(0, 2).toUpperCase() + "_" + i + "_" + System.nanoTime(),
+          // 유니크한 직원 코드 생성
+          department, // 부서 설정
+          position, // 직급 설정
+          LocalDate.of(2023, 1, (i % 28) + 1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC),
+          // 입사일 설정
+          null // profile은 선택사항으로 null로 설정
+      );
       employeeRepository.save(employee);
+
     }
 
     for (int i = 1; i <= 5; i++) {
-      Employee employee = new Employee();
-      employee.setName(position + "2 " + department.getName() + " Employee " + i);
-      employee.setEmail(position.toLowerCase() + "2." + department.getName().toLowerCase() + i + "@example.com");
-
-      // ✅ 유니크한 직원 코드 생성
-      employee.setCode("EMP_" + position.substring(0, 2).toUpperCase() + "2_" + i + "_" + System.nanoTime());
-
-      // ✅ 직급 배정
-      employee.setPosition(position);
-      employee.setStatus(Status.ON_LEAVE);
-      employee.setDepartment(department);
-      employee.setJoinedAt(
-          LocalDate.of(2023, 1, (i % 28) + 1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+      Employee employee = new Employee(
+          EmployeeStatusType.휴직중, // 상태 설정 (예: EmployeeStatusType.휴직중, 재직중 등)
+          position + "2 " + department.getName() + " Employee " + i, // 이름 설정
+          position.toLowerCase() + "2." + department.getName().toLowerCase() + i + "@example.com",
+          // 이메일 설정
+          "EMP_" + position.substring(0, 2).toUpperCase() + "2_" + i + "_" + System.nanoTime(),
+          // 유니크한 직원 코드 생성
+          department, // 부서 설정
+          position, // 직급 설정
+          LocalDate.of(2023, 1, (i % 28) + 1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC),
+          // 입사일 설정
+          null // profile은 선택사항으로 null로 설정
+      );
       employeeRepository.save(employee);
+
     }
 
   }
@@ -111,7 +116,7 @@ public class EmployeeServicePositionTest {
   void 직함별_직원_분포_조회() {
     // ✅ position 기준 직원 분포 조회
     List<EmployeeDistributionResponse> positionDistribution = employeeService.getEmployeeDistribution(
-        "position", Status.ACTIVE);
+        "position", EmployeeStatusType.재직중);
 
     // ✅ 기대되는 직급별 직원 수 및 비율 (정확한 직원 수 반영)
     Map<String, EmployeeDistributionResponse> expectedPosition = Map.of(
@@ -140,11 +145,12 @@ public class EmployeeServicePositionTest {
 
     }
   }
+
   @Test
-  public void 상태별_직원_분포_조회(){
+  public void 상태별_직원_분포_조회() {
     // ✅ position 기준 직원 분포 조회
     List<EmployeeDistributionResponse> positionDistribution2 = employeeService.getEmployeeDistribution(
-        "position", Status.ON_LEAVE);
+        "position", EmployeeStatusType.휴직중);
 
     // ✅ 기대되는 직급별 직원 수 및 비율 (정확한 직원 수 반영)
     Map<String, EmployeeDistributionResponse> expectedPosition2 = Map.of(
@@ -176,8 +182,9 @@ public class EmployeeServicePositionTest {
     // ✅ 콘솔 출력 (디버깅용)
     System.out.println("positionDistribution2 = " + positionDistribution2);
   }
+
   @Test
-  public void 전체_직원_수(){
+  public void 전체_직원_수() {
     ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(null, null, null);
     assertThat(employeeCount.getBody()).isEqualTo(160); // ON_LEAVE - 100, ACTIVE - 60
   }

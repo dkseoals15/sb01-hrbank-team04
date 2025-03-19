@@ -1,12 +1,10 @@
 package com.codeit.sb01hrbankteam04.repository.employee;
 
-import com.codeit.sb01hrbankteam04.model.Department;
-import com.codeit.sb01hrbankteam04.model.Employee;
-import com.codeit.sb01hrbankteam04.model.Status;
+import com.codeit.sb01hrbankteam04.domain.department.Department;
+import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
+import com.codeit.sb01hrbankteam04.domain.employee.entity.EmployeeStatusType;
+import com.codeit.sb01hrbankteam04.domain.employee.repository.EmployeeRepository;
 import com.codeit.sb01hrbankteam04.repository.DepartmentRepository;
-import com.codeit.sb01hrbankteam04.repository.EmployeeRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +24,6 @@ public class EmployeeRepositoryInitTest {
   @Autowired
   private DepartmentRepository departmentRepository;
 
-  @PersistenceContext
-  private EntityManager entityManager;
-
   private Department department;
 
   @BeforeEach
@@ -45,14 +40,17 @@ public class EmployeeRepositoryInitTest {
 
   @Test
   void 직원_저장() {
-    Employee employee = new Employee();
-    employee.setName("John Doe");
-    employee.setEmail("john.doe@example.com");
-    employee.setCode("EMP12345");
-    employee.setStatus(Status.ACTIVE);
-    employee.setDepartment(department);
-    employee.setPosition("Manager");
-    employee.setJoinedAt(Instant.now());
+    Employee employee = new Employee(
+        EmployeeStatusType.재직중, // 또는 다른 상태값을 설정 (예: 재직중, 휴직중 등)
+        "John Doe",
+        "john.doe@example.com",
+        "EMP12345",
+        department,
+        "Manager",
+        Instant.now(),
+        null // profile은 선택사항으로 null로 설정
+    );
+    employeeRepository.save(employee);
 
     Employee savedEmployee = employeeRepository.save(employee);
 
@@ -62,14 +60,17 @@ public class EmployeeRepositoryInitTest {
 
   @Test
   void 이메일로_직원찾기() {
-    Employee employee = new Employee();
-    employee.setName("Jane Doe");
-    employee.setEmail("jane.doe@example.com");
-    employee.setCode("EMP67890");
-    employee.setStatus(Status.ACTIVE);
-    employee.setDepartment(department);
-    employee.setPosition("Analyst");
-    employee.setJoinedAt(Instant.now());
+    Employee employee = new Employee(
+        EmployeeStatusType.재직중, // 또는 다른 상태값으로 설정
+        "Jane Doe",
+        "jane.doe@example.com",
+        "EMP67890",
+        department,
+        "Analyst",
+        Instant.now(),
+        null // profile (optional, null로 설정)
+    );
+    employeeRepository.save(employee);
 
     employeeRepository.save(employee);
 
@@ -80,14 +81,17 @@ public class EmployeeRepositoryInitTest {
 
   @Test
   void 직원_삭제() {
-    Employee employee = new Employee();
-    employee.setName("Alice Brown");
-    employee.setEmail("alice.brown@example.com");
-    employee.setCode("EMP99999");
-    employee.setStatus(Status.ACTIVE);
-    employee.setDepartment(department);
-    employee.setPosition("Consultant");
-    employee.setJoinedAt(Instant.now());
+    Employee employee = new Employee(
+        EmployeeStatusType.재직중, // 또는 다른 상태값을 설정 (예: 재직중, 휴직중 등)
+        "Alice Brown",
+        "alice.brown@example.com",
+        "EMP99999",
+        department,
+        "Consultant",
+        Instant.now(),
+        null // profile은 선택사항으로 null로 설정
+    );
+    employeeRepository.save(employee);
 
     Employee savedEmployee = employeeRepository.save(employee);
     Long employeeId = savedEmployee.getId();

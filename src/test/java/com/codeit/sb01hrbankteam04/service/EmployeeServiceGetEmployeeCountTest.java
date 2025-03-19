@@ -2,13 +2,13 @@ package com.codeit.sb01hrbankteam04.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codeit.sb01hrbankteam04.model.Department;
-import com.codeit.sb01hrbankteam04.model.Employee;
-import com.codeit.sb01hrbankteam04.model.Status;
+import com.codeit.sb01hrbankteam04.domain.department.Department;
+import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
+import com.codeit.sb01hrbankteam04.domain.employee.entity.EmployeeStatusType;
+import com.codeit.sb01hrbankteam04.domain.employee.repository.EmployeeRepository;
+import com.codeit.sb01hrbankteam04.domain.employee.service.EmployeeService;
 import com.codeit.sb01hrbankteam04.repository.DepartmentRepository;
-import com.codeit.sb01hrbankteam04.repository.EmployeeRepository;
 import java.time.LocalDate;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +31,9 @@ public class EmployeeServiceGetEmployeeCountTest {
 
   @BeforeEach
   void setUp() {
+    employeeRepository.deleteAll(); // 기존 데이터 초기화
+    departmentRepository.deleteAll();
+
     department = new Department();
     department.setName("Finance");
     department.setDescription("Handles financial matters");
@@ -38,35 +41,15 @@ public class EmployeeServiceGetEmployeeCountTest {
         LocalDate.now().minusYears(10).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
     department = departmentRepository.save(department);
 
-    Employee employee1 = new Employee();
-    employee1.setName("John Doe");
-    employee1.setEmail("john.doe@example.com");
-    employee1.setCode("EMP123");
-    employee1.setStatus(Status.ACTIVE);
-    employee1.setDepartment(department);
-    employee1.setJoinedAt(
-        LocalDate.of(2023, 1, 10).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+    Employee employee1 = new Employee(EmployeeStatusType.재직중, "John Doe", "john.doe@example.com", "EMP123", department, "부장", LocalDate.of(2023, 1, 10).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
     employeeRepository.save(employee1);
 
-    Employee employee2 = new Employee();
-    employee2.setName("Jane Smith");
-    employee2.setEmail("jane.smith@example.com");
-    employee2.setCode("EMP456");
-    employee2.setStatus(Status.ON_LEAVE);
-    employee2.setDepartment(department);
-    employee2.setJoinedAt(
-        LocalDate.of(2024, 2, 15).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+    Employee employee2 = new Employee(EmployeeStatusType.휴직중, "Jane Smith", "jane.smith@example.com", "EMP456", department, "부장", LocalDate.of(2024, 2, 15).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
     employeeRepository.save(employee2);
 
-    Employee employee3 = new Employee();
-    employee3.setName("Jane2 Smith");
-    employee3.setEmail("jane2.smith@example.com");
-    employee3.setCode("EMP4561");
-    employee3.setStatus(Status.ON_LEAVE);
-    employee3.setDepartment(department);
-    employee3.setJoinedAt(
-        LocalDate.of(2023, 3, 15).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+    Employee employee3 = new Employee(EmployeeStatusType.휴직중, "Jane2 Smith", "jane2.smith@example.com", "EMP4561", department, "부장", LocalDate.of(2023, 3, 15).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
     employeeRepository.save(employee3);
+
   }
 
   @Test
@@ -77,7 +60,7 @@ public class EmployeeServiceGetEmployeeCountTest {
 
   @Test
   void testCountEmployees_ByStatus() {
-    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(Status.ACTIVE, null,
+    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(EmployeeStatusType.재직중, null,
         null);
     assertThat(employeeCount.getBody()).isEqualTo(1);
   }

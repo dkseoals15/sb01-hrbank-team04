@@ -38,3 +38,9 @@ springdoc:
     doc-expansion: none
     filter: true
     show-extensions: true
+
+hrbank:
+  storage:
+    type: local
+    local:
+      root-path: temp
