@@ -15,7 +15,7 @@ spring:
       org.hibernate.envers.revision_field_name: revisionId
       org.hibernate.envers.revision_type_field_name: revtype
       org.hibernate.envers.store_data_at_delete: true
-
+    open-in-view: false
   transaction:
     default-timeout: 30
   datasource:
@@ -29,6 +29,10 @@ hrbank:
     type: local
     local:
       root-path: temp
+
+backup:
+  schedule:
+    rate: 3600000   # 1시간 (60분 * 60초 * 1000 밀리초 = 3600000) / 1분은 60000
 
 server:
   port: 8080

@@ -3,7 +3,9 @@ package com.codeit.sb01hrbankteam04.global.util.ip;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public enum IPHeader {
   X_FORWARDED_FOR("X-Forwarded-For"),
   PROXY_CLIENT_IP("Proxy-Client-IP"),
@@ -14,11 +16,7 @@ public enum IPHeader {
   X_REALIP("X-RealIP");
 
   private final String headerName;
-
-  IPHeader(String headerName) {
-    this.headerName = headerName;
-  }
-
+  
   public String getHeaderName() {
     return headerName;
   }

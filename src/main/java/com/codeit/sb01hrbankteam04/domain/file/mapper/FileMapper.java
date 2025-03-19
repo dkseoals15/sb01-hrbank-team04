@@ -2,6 +2,9 @@ package com.codeit.sb01hrbankteam04.domain.file.mapper;
 
 import com.codeit.sb01hrbankteam04.domain.file.dto.FileDto;
 import com.codeit.sb01hrbankteam04.domain.file.entity.File;
+import com.codeit.sb01hrbankteam04.domain.file.entity.FileType;
+import java.io.IOException;
+import java.nio.file.Files;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,5 +39,17 @@ public class FileMapper {
    */
   public File toEntity(MultipartFile file) {
     return new File(file.getOriginalFilename(), file.getContentType(), file.getSize());
+  }
+
+  public File toEntity(java.io.File file) throws IOException {
+    String contentType = Files.probeContentType(file.toPath());
+    if (contentType == null && file.getName().endsWith(FileType.ERROR_LOG.getDefaultExtension())) {
+      contentType = "text/plain";
+    }
+    return new File(file.getName(), contentType, file.length());
+  }
+
+  public File toEntity(FileDto fileDto) {
+    return new File(fileDto.filename(), fileDto.contentType(), fileDto.fileSize());
   }
 }

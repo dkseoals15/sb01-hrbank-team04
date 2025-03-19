@@ -14,11 +14,11 @@ public interface FileStorage {
   /**
    * 파일을 로컬에 저장.
    *
-   * @param fileId 파일 아이디
-   * @param file   파일 객체
-   * @param bytes  byte 파일
+   * @param file  파일 객체
+   * @param bytes byte 파일
+   * @return
    */
-  void put(Long fileId, File file, byte[] bytes);
+  File put(File file, byte[] bytes);
 
   /**
    * 파일 다운로드 응답 데이터 전달
