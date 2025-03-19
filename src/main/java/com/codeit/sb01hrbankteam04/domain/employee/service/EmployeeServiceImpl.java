@@ -2,6 +2,7 @@ package com.codeit.sb01hrbankteam04.domain.employee.service;
 
 import com.codeit.sb01hrbankteam04.domain.department.Department;
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeCreateRequest;
+import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeePageResponse;
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeResponse;
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeUpdateRequest;
 import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
@@ -13,16 +14,26 @@ import com.codeit.sb01hrbankteam04.domain.file.File;
 import com.codeit.sb01hrbankteam04.domain.file.FileDto;
 import com.codeit.sb01hrbankteam04.domain.mapper.EmployeeMapper;
 import jakarta.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.management.InstanceAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +44,43 @@ public class EmployeeServiceImpl implements EmployeeService {
   private final DepartmentRepository departmentRepository;
   private final FileRepository fileRepository;
   private final EmployeeMapper employeeMapper;
+
+
+  public EmployeePageResponse getEmployees(
+      String nameOrEmail, String employeeNumber, String departmentName, String position,
+      String hireDateFrom, String hireDateTo, String status,
+      Long nextIdAfter, String cursor, String sortBy, int size) {
+
+    // 페이지 정보 생성
+    Pageable pageable = PageRequest.of(0, size);
+
+    // 직원 목록 조회 (페이징 적용)
+    List<Employee> employees = employeeRepository.findEmployeesByCursor(
+        nameOrEmail, employeeNumber, departmentName, position,
+        hireDateFrom, hireDateTo, status, nextIdAfter, sortBy, pageable);
+
+    // EmployeeDto 변환
+    List<EmployeeResponse> employeeDtos = employees.stream()
+        .map(employeeMapper::toDto)
+        .collect(Collectors.toList());
+
+    // 다음 페이지 정보 계산
+    Long lastId = employees.isEmpty() ? null : employees.get(employees.size() - 1).getId();
+    String nextCursor = lastId != null ? encodeCursor(lastId) : null;
+    boolean hasNext = employees.size() == size;
+
+    // 총 직원 개수 조회
+    Long totalElements = employeeRepository.count();
+
+    // 결과 반환
+    return EmployeePageResponse.from(
+        employeeDtos, nextCursor, lastId, size, totalElements, hasNext);
+  }
+
+  // Cursor 값 Base64 인코딩
+  private String encodeCursor(Long id) {
+    return Base64.getEncoder().encodeToString(("{\"id\":" + id + "}").getBytes(StandardCharsets.UTF_8));
+  }
 
 
 
@@ -59,7 +107,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         .orElse(null);
 
     Employee employee = Employee.builder()
-        .status(EmployeeStatusType.재직중)
+        .status(EmployeeStatusType.ACTIVE)
         .name(employeeCreateRequest.name())
         .email(employeeCreateRequest.email())
         .code("2025-TEMPCODE") //TODO: 코드 생성 로직 추가해야함
@@ -75,13 +123,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   //"yyyy-MM-dd" String을 Instant로 변환하는 코드
   private Instant dateToInstant(String date) {
+    if (date==null){
+      return null;
+    }
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     //문자열을 localDate 변환
-    LocalDate localDate = LocalDate.parse(date, formatter);
-
+    LocalDate localDate = LocalDate.parse(date,  DateTimeFormatter.ISO_DATE);
     //LocalDate를 Instant 형식으로 변환, (00:00 UT
-    return localDate.atStartOfDay(ZoneId.of("UTC")).toInstant();
+    Instant instant = localDate.atStartOfDay(ZoneId.of("Asia/Seoul")).toInstant();
+    return instant;
   }
 
   @Override
@@ -91,8 +142,10 @@ public class EmployeeServiceImpl implements EmployeeService {
             .orElseThrow(()-> new NoSuchElementException("no such employee with id "  + id));
   }
 
-  @Override
-  public List<EmployeeResponse> findAll() {
+
+
+
+  private List<EmployeeResponse> findAll() {
     return employeeRepository.findAll()
         .stream()
         .map(employeeMapper::toDto)

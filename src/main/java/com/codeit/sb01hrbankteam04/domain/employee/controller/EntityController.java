@@ -1,15 +1,12 @@
 package com.codeit.sb01hrbankteam04.domain.employee.controller;
 
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeCreateRequest;
+import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeePageResponse;
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeResponse;
-import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeSearchRequest;
+import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeePageRequest;
 import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeUpdateRequest;
-import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
-import com.codeit.sb01hrbankteam04.domain.employee.repository.FileRepository;
 import com.codeit.sb01hrbankteam04.domain.employee.service.EmployeeService;
-import com.codeit.sb01hrbankteam04.domain.file.File;
 import com.codeit.sb01hrbankteam04.domain.file.FileDto;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.Optional;
 import javax.management.InstanceAlreadyExistsException;
@@ -27,7 +24,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -41,25 +37,23 @@ public class EntityController {
 
   private final EmployeeService employeeService;
 
-  //직원 목록 조회
   @GetMapping
-  public ResponseEntity<EmployeeResponse> getEmployees(@ModelAttribute EmployeeSearchRequest request) {
+  public ResponseEntity<EmployeePageResponse> getEmployees(
+      @RequestParam(required = false) String nameOrEmail,
+      @RequestParam(required = false) String employeeNumber,
+      @RequestParam(required = false) String departmentName,
+      @RequestParam(required = false) String position,
+      @RequestParam(required = false) String hireDateFrom,
+      @RequestParam(required = false) String hireDateTo,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Long nextIdAfter,
+      @RequestParam(required = false) String cursor,
+      @RequestParam(defaultValue = "hireDate") String sortBy,
+      @RequestParam(defaultValue = "10") int size) {
 
-
-
-    // Pageable을 생성
-    Sort sort = Sort.by(Sort.Order.by(request.getSortField()));
-    sort = request.getSortDirection().equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-    Pageable pageable = PageRequest.of(0, request.getSize(), sort);
-
-    // Service에서 처리 후 결과 리턴
-    Page<EmployeeResponse> employeePage = employeeService.findAll(
-        nameOrEmail, employeeNumber, departmentName, position, hireDateFrom, hireDateTo, status,
-        pageable);
-
-    return ResponseEntity.ok(employeePage);
+    return ResponseEntity.ok(employeeService.getEmployees(
+        nameOrEmail, employeeNumber, departmentName, position, hireDateFrom, hireDateTo, status, nextIdAfter, cursor,sortBy, size));
   }
-
 
   //직원 등록
   @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

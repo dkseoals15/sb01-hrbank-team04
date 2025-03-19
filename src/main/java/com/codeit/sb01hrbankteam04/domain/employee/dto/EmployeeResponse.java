@@ -3,6 +3,7 @@ package com.codeit.sb01hrbankteam04.domain.employee.dto;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
