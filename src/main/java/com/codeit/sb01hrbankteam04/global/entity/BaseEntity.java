@@ -1,6 +1,7 @@
 package com.codeit.sb01hrbankteam04.global.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,6 +10,7 @@ import java.time.Instant;
 import lombok.Getter;
 import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 엔티티 작성 시 공통적으로 들어가는 값들에 대해 정의
@@ -17,6 +19,7 @@ import org.springframework.data.annotation.CreatedDate;
  */
 @MappedSuperclass
 @Getter
+@EntityListeners(AuditingEntityListener.class) //Entity의 Auditing 정보 주입 클래스
 public abstract class BaseEntity {
 
   @Id
@@ -24,8 +27,8 @@ public abstract class BaseEntity {
   private Long id;
 
   @CreatedDate
-  @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
   @NotAudited
+  @Column(name = "created_at", updatable = false, insertable = false)
   private Instant createdAt;
 
 }

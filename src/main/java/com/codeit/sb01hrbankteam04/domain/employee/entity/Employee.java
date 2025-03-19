@@ -3,19 +3,10 @@ package com.codeit.sb01hrbankteam04.domain.employee.entity;
 import com.codeit.sb01hrbankteam04.domain.department.Department;
 import com.codeit.sb01hrbankteam04.domain.file.entity.File;
 import com.codeit.sb01hrbankteam04.global.entity.BaseUpdatableEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.Instant;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.envers.Audited;
@@ -32,6 +23,7 @@ public class Employee extends BaseUpdatableEntity {
 
   @Column(nullable = false, length = 20)
   @Enumerated(EnumType.STRING) // TODO: 추후 수정요구해야 할 듯?
+  @Setter
   private EmployeeStatusType status;
 
   @Column(nullable = false, length = 100)
@@ -61,8 +53,8 @@ public class Employee extends BaseUpdatableEntity {
   @NotAudited // 프로필은 추적하지 않음
   private File profile;
 
-  public Employee(EmployeeStatusType status, String name, String email, String code,
-      Department department, String position, Instant joinedAt, File profile) {
+  public Employee(EmployeeStatusType status, String name,String email, String code,
+      Department department, String position,Instant joinedAt, File profile) {
     this.status = status;
     this.name = name;
     this.email = email;
