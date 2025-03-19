@@ -112,7 +112,6 @@ public class BackupServiceImpl implements BackupService {
       return backupMapper.toDto(backup);
     }
 
-    System.out.println("데이터 백업 작업을 수행합니다.");
     // 데이터 백업 작업 수행
     try {
       java.io.File backupFile = makeBackupFile(backup.getId());
@@ -138,8 +137,10 @@ public class BackupServiceImpl implements BackupService {
 
   }
 
-  // 백업 필요 여부 확인
-  public boolean isBackupNeeded() {
+  /**
+   * 백업 필요성 여부 확인
+   */
+  private boolean isBackupNeeded() {
     // 가장 최근 완료된 배치 시간 조회
     Instant lastCompletedTime = backupRepository.findLastCompletedBatchTime();
 
@@ -149,7 +150,13 @@ public class BackupServiceImpl implements BackupService {
     return employeeRepository.existsUpdatedEmployeesAfter(lastCompletedTime);
   }
 
-  // 백업 파일 만들기
+  /**
+   * 백업 파일 생성
+   *
+   * @param backupId 백업 객체 아이디
+   * @return java.io.File 객체 (File 엔티티 아님!)
+   * @throws IOException 파일 저장을 진행하기에 {@link IOException} 발생 가능성 존재
+   */
   private java.io.File makeBackupFile(Long backupId) throws IOException {
     List<Employee> employees = employeeRepository.getAllForBackUp();
     String filename =
@@ -158,6 +165,7 @@ public class BackupServiceImpl implements BackupService {
     java.io.File backupFile = new java.io.File(
         System.getProperty("user.dir") + "/temp/" + filename);
 
+    // TODO: 생성 시 OOM 이슈 발생 할 수 있음 -> 해당 부분 고민해보기
     try (CSVWriter writer = new CSVWriter(new FileWriter(backupFile))) {
       writer.writeNext(new String[]{"ID", "직원번호", "이름", "이메일", "부서", "직급", "입사일", "상태"});
       for (Employee employee : employees) {
@@ -176,7 +184,13 @@ public class BackupServiceImpl implements BackupService {
     return backupFile;
   }
 
-  // 에러 로그 파일 만들기
+  /**
+   * 에러 로그 파일 생성
+   *
+   * @param backupId     백업 객체 아이디
+   * @param errorMessage 에러 메시지
+   * @return File 객체
+   */
   private File makeErrorLog(Long backupId, String errorMessage) {
     Logger logger = Logger.getLogger(String.valueOf(BackupService.class));
 

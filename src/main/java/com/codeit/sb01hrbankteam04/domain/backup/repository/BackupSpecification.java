@@ -9,14 +9,26 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * 백업 목록 조회를 위한 필터링 조건을 정의하는 Specification 클래스.
+ * <p>
+ * JPA Criteria API를 사용하여 동적으로 쿼리를 생성
+ */
 public class BackupSpecification {
 
+  /**
+   * 백얼 리스트 조회 시 필터링을 위함.
+   * <p>
+   * specification을 생성
+   *
+   * @param requestDto
+   */
   public static Specification<Backup> withFilters(BackupRequestDto requestDto) {
     return ((root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
       if (requestDto.worker() != null && !requestDto.worker().isEmpty()) {
-        predicates.add(criteriaBuilder.equal(root.get("worker"), requestDto.worker()));
+        predicates.add(criteriaBuilder.equal(root.get("backupBy"), requestDto.worker()));
       }
       if (requestDto.status() != null && !requestDto.status().isEmpty()) {
         predicates.add(criteriaBuilder.equal(root.get("backupStatus"),
