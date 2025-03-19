@@ -1,24 +1,28 @@
 package com.codeit.sb01hrbankteam04.domain.employee.entity;
 
 import com.codeit.sb01hrbankteam04.domain.department.Department;
-import com.codeit.sb01hrbankteam04.domain.file.File;
+import com.codeit.sb01hrbankteam04.domain.file.entity.File;
 import com.codeit.sb01hrbankteam04.global.entity.BaseUpdatableEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.Random;
 
 import java.time.Instant;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 @Entity
 @Table(name = "employee")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Audited
 public class Employee extends BaseUpdatableEntity {
 
   @Column(nullable = false, length = 20)
-  @Enumerated(EnumType.STRING)//Enumerated 어노테이션 추가
+  @Enumerated(EnumType.STRING)
+  @Setter
   private EmployeeStatusType status;
 
   @Column(nullable = false, length = 100)
@@ -32,7 +36,8 @@ public class Employee extends BaseUpdatableEntity {
 
   @ManyToOne
   @JoinColumn(name = "department_id", foreignKey = @ForeignKey(name = "fk_department"))
-  @OnDelete(action= OnDeleteAction.SET_NULL)
+  @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED) // department_id 만 추적
+  @OnDelete(action = OnDeleteAction.SET_NULL)
   private Department department;
 
   @Column(nullable = false, length = 50)
@@ -44,6 +49,7 @@ public class Employee extends BaseUpdatableEntity {
   @OneToOne(optional = true)
   @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"), nullable = true)
   @OnDelete(action= OnDeleteAction.SET_NULL)
+  @NotAudited // 프로필은 추적하지 않음
   private File profile;
 
   @Builder
@@ -52,6 +58,7 @@ public class Employee extends BaseUpdatableEntity {
     this.status = status;
     this.name = name;
     this.email = email;
+    this.code = code;
     this.department = department;
     this.position = position;
     this.joinedAt = joinedAt;

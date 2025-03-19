@@ -5,6 +5,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PreUpdate;
 import java.time.Instant;
 import lombok.Getter;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.LastModifiedDate;
 
 /**
@@ -18,6 +19,7 @@ public abstract class BaseUpdatableEntity extends BaseEntity {
 
   @LastModifiedDate
   @Column(name = "updated_at", updatable = true)
+  @NotAudited
   private Instant updatedAt;
 
   @PreUpdate
