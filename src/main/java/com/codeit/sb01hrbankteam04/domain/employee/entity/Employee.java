@@ -18,7 +18,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Employee extends BaseEntity {
 
   @Column(nullable = false, length = 20)
-  @Setter
+  @Enumerated(EnumType.STRING) // TODO: 추후 수정요구해야 할 듯?
   private EmployeeStatusType status;
 
   @Column(nullable = false, length = 100)
@@ -40,11 +40,6 @@ public class Employee extends BaseEntity {
 
   @Column(nullable = false)
   private Instant joinedAt;
-
-  /*
-  @Column(nullable = true)
-  @Setter //임시
-  private Instant updatedAt;*/
 
   @OneToOne
   @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"))
