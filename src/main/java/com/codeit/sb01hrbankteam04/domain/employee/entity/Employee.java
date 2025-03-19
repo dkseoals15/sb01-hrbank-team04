@@ -5,6 +5,7 @@ import com.codeit.sb01hrbankteam04.domain.file.File;
 import com.codeit.sb01hrbankteam04.global.entity.BaseUpdatableEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.Random;
 
 import java.time.Instant;
 import org.hibernate.annotations.OnDelete;
@@ -13,7 +14,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "employee")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Employee extends BaseUpdatableEntity {
 
@@ -46,16 +46,18 @@ public class Employee extends BaseUpdatableEntity {
   @OnDelete(action= OnDeleteAction.SET_NULL)
   private File profile;
 
-  public Employee(EmployeeStatusType status, String name,String email, String code,
+  @Builder
+  public Employee(EmployeeStatusType status, String name,String email,
       Department department, String position,Instant joinedAt, File profile) {
     this.status = status;
     this.name = name;
     this.email = email;
-    this.code = code;
     this.department = department;
     this.position = position;
     this.joinedAt = joinedAt;
     this.profile = profile;
+
+    this.code = makeCode(joinedAt);
   }
 
   public void update(String name,String email, Department department, String position,
@@ -67,6 +69,11 @@ public class Employee extends BaseUpdatableEntity {
     this.joinedAt = joinedAt;
     this.status = status;
     this.profile = profile;
+  }
+
+  public String makeCode(Instant joinedAt){
+    return "EMP-"+joinedAt.toString().substring(0, 4)
+        +"-"+String.format("%013d", new Random().nextInt(999999999));
   }
 
 }

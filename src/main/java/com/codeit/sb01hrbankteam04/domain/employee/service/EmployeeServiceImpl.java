@@ -51,33 +51,31 @@ public class EmployeeServiceImpl implements EmployeeService {
       String hireDateFrom, String hireDateTo, String status,
       Long nextIdAfter, String cursor, String sortBy, int size) {
 
-    // 페이지 정보 생성
+    // 페이지
     Pageable pageable = PageRequest.of(0, size);
 
-    // 직원 목록 조회 (페이징 적용)
+    // 직원 목록 조회
     List<Employee> employees = employeeRepository.findEmployeesByCursor(
         nameOrEmail, employeeNumber, departmentName, position,
         hireDateFrom, hireDateTo, status, nextIdAfter, sortBy, pageable);
 
-    // EmployeeDto 변환
-    List<EmployeeResponse> employeeDtos = employees.stream()
+
+    List<EmployeeResponse> EmployeeResponses = employees.stream()
         .map(employeeMapper::toDto)
         .collect(Collectors.toList());
 
-    // 다음 페이지 정보 계산
+    // 다음 페이지 정보
     Long lastId = employees.isEmpty() ? null : employees.get(employees.size() - 1).getId();
     String nextCursor = lastId != null ? encodeCursor(lastId) : null;
     boolean hasNext = employees.size() == size;
 
-    // 총 직원 개수 조회
     Long totalElements = employeeRepository.count();
-
     // 결과 반환
     return EmployeePageResponse.from(
-        employeeDtos, nextCursor, lastId, size, totalElements, hasNext);
+        EmployeeResponses, nextCursor, lastId, size, totalElements, hasNext);
   }
 
-  // Cursor 값 Base64 인코딩
+  // Cursor value to Base64 인코딩
   private String encodeCursor(Long id) {
     return Base64.getEncoder().encodeToString(("{\"id\":" + id + "}").getBytes(StandardCharsets.UTF_8));
   }
@@ -110,7 +108,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         .status(EmployeeStatusType.ACTIVE)
         .name(employeeCreateRequest.name())
         .email(employeeCreateRequest.email())
-        .code("2025-TEMPCODE") //TODO: 코드 생성 로직 추가해야함
         .department(department)
         .position(employeeCreateRequest.position())
         .joinedAt(dateToInstant(employeeCreateRequest.hireDate()))
@@ -199,11 +196,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     return employeeMapper.toDto(employee);
   }
 
+  @Transactional
   @Override
   public void delete(Long id) {
-    if(!employeeRepository.existsById(id)) {
-      throw new NoSuchElementException("no such employee with id " + id);
+    Employee employee = employeeRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("no such employee with id " + id));
+
+    //유저의 프로필 이미지 파일 삭제
+    if(employee.getProfile()!=null){
+      fileRepository.deleteById(employee.getProfile().getId());
     }
+
     employeeRepository.deleteById(id);
   }
 }
