@@ -5,11 +5,11 @@ import org.hibernate.envers.RevisionType;
 public enum ModifyType {
   CREATED, UPDATED, DELETED;
 
-  public static int toRevisionType(ModifyType type) {
+  public static RevisionType toRevisionType(ModifyType type) {
     return switch (type) {
-      case CREATED -> 0;
-      case UPDATED -> 1;
-      case DELETED -> 2;
+      case CREATED -> RevisionType.ADD;
+      case UPDATED -> RevisionType.MOD;
+      case DELETED -> RevisionType.DEL;
     };
   }
 

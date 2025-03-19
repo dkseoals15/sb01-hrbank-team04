@@ -2,6 +2,7 @@ package com.codeit.sb01hrbankteam04.domain.employeehistory.dto.request;
 
 import com.codeit.sb01hrbankteam04.domain.employeehistory.type.ModifyType;
 import java.time.Instant;
+import java.util.List;
 
 public record ChangeLogRequest(
     Long lastRevisionId,
@@ -9,6 +10,7 @@ public record ChangeLogRequest(
     String employeeNumber,
     ModifyType type,
     String memo,
+    String cursor,
     String ipAddress,
     Instant atFrom,
     Instant atTo,

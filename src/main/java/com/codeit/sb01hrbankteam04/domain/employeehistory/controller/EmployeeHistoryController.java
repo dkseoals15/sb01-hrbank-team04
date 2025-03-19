@@ -1,17 +1,25 @@
 package com.codeit.sb01hrbankteam04.domain.employeehistory.controller;
 
+import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.request.ChangeLogRequest;
+import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.request.FilterRequest;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.CursorPageResponseEmployeeDto;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.DiffDto;
+import com.codeit.sb01hrbankteam04.domain.employeehistory.entity.EmployeeHistory;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.repository.EmployeeChangeLogRepository;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.type.ModifyType;
+import jakarta.persistence.EntityManager;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.config.SortHandlerMethodArgumentResolverCustomizer;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmployeeHistoryController {
 
-  private final EmployeeChangeLogRepository employeeChangeLogRepository;
-  private final SortHandlerMethodArgumentResolverCustomizer sortHandlerMethodArgumentResolverCustomizer;
+  private final EntityManager entityManager;
+
+  private final EmployeeChangeLogRepository repository;
 
   @GetMapping
   public ResponseEntity<CursorPageResponseEmployeeDto> getChangeLogs(
@@ -36,28 +45,40 @@ public class EmployeeHistoryController {
       @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) Instant atFrom,
       @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) Instant atTo,
       @RequestParam(required = false) Long idAfter,
+      @RequestParam(required = false) String  cursor,
       @RequestParam(defaultValue = "10") int size,
-      @RequestParam(defaultValue = "at") String sortField,
-      @RequestParam(defaultValue = "desc") String sortDirection,
-      Sort sort) {
+      @RequestParam(defaultValue = "createdAt") String sortField,
+      @RequestParam(defaultValue = "desc") String sortDirection) {
 
-    ChangeLogRequest request = new ChangeLogRequest(idAfter, size, employeeNumber, type, memo,
+    ChangeLogRequest request = new ChangeLogRequest(idAfter, size, employeeNumber, type, memo, cursor,
         ipAddress, atFrom, atTo, sortField, sortDirection);
 
-    CursorPageResponseEmployeeDto response =  employeeChangeLogRepository.findChangeLogs(request);
+    CursorPageResponseEmployeeDto response =  repository.findChangeLogs(request);
 
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping("/{id}/diffs")
-  public ResponseEntity<List<DiffDto>> getChangeLogDetail(
-      @PathVariable(value = "id") Long id
-  ) {
-    return null;
+  @GetMapping("/{revisionId}/diffs")
+  public ResponseEntity<List<DiffDto>> getRevisionDetails(@PathVariable("revisionId") Long revisionId) {
+    List<DiffDto> diffs = repository.getRevisionDetails(revisionId);
+    return ResponseEntity.ok(diffs);
   }
 
+
+
   @GetMapping("/count")
-  public Long getChangeLogCount() {
-    return null;
+  public ResponseEntity<Long> getChangeLogCount(
+      @RequestParam(required = false) String employeeNumber,
+      @RequestParam(required = false) ModifyType type,
+      @RequestParam(required = false) String memo,
+      @RequestParam(required = false) String ipAddress,
+      @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) Instant atFrom,
+      @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) Instant atTo
+  ) {
+    FilterRequest filterRequest = new FilterRequest(employeeNumber, type, memo, ipAddress, atFrom, atTo);
+
+    Long count = repository.countChangeLogs(filterRequest);
+
+    return ResponseEntity.ok(count);
   }
 }
