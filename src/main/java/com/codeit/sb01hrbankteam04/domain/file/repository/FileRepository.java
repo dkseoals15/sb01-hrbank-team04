@@ -22,5 +22,4 @@ public interface FileRepository extends JpaRepository<File, Long> {
    */
   @Query("SELECT f.createdAt FROM File f WHERE f.id = :id")
   Optional<Instant> findCreatedAtById(@Param("id") Long id);
-
 }

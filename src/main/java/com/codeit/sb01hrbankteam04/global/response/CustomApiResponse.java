@@ -2,6 +2,7 @@ package com.codeit.sb01hrbankteam04.global.response;
 
 import com.codeit.sb01hrbankteam04.global.exception.CustomException;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.annotation.Nullable;
 import org.springframework.http.HttpStatus;
 
@@ -18,7 +19,7 @@ import org.springframework.http.HttpStatus;
 public record CustomApiResponse<T>(
     HttpStatus httpStatus,
     boolean success,
-    @Nullable T data,
+    @Nullable @JsonUnwrapped T data,  // 이거 해줘야 응답을 잘 함..
     @Nullable ErrorResponse error
 ) {
 

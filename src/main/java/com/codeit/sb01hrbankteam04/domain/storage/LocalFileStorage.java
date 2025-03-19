@@ -58,13 +58,14 @@ public class LocalFileStorage implements FileStorage {
   }
 
   @Override
-  public void put(Long fileId, File file, byte[] bytes) {
+  public File put(File file, byte[] bytes) {
     try {
       Path filePath = resolvePath(file.getName());
-      Files.write(filePath, bytes, StandardOpenOption.CREATE_NEW);
+      Files.write(filePath, bytes, StandardOpenOption.CREATE);
     } catch (Exception e) {
       throw new CustomException(ErrorCode.FILE_WRITE_ERROR);
     }
+    return file;
   }
 
   @Override
