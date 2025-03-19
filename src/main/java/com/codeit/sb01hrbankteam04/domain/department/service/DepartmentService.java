@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,19 +92,27 @@ public class DepartmentService {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT_VALUE));
 
-        // 중복 이름 체크
-        departmentRepository.findByName(request.name()).ifPresent(existing -> {
-            if(!existing.getId().equals(id)) {
-                throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-            }
-        });
+        // 기존 값 유지하면서 수정된 값만 반영
+        String newName = request.name() != null ? request.name() : department.getName();
+        String newDescription = request.description() != null ? request.description() : department.getDescription();
+        LocalDate newEstablishedDate = request.establishedDate() != null ? request.establishedDate() : department.getEstablishedDate();
+
+        // 중복 이름 체크 (name이 null이 아닐 때만 실행!)
+        if (request.name() != null) {
+            departmentRepository.findByName(request.name()).ifPresent(existing -> {
+                if (!existing.getId().equals(id)) {
+                    throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+                }
+            });
+        }
 
         // 데이터 업데이트
-        department.updateDepartment(request.name(), request.description(), request.establishedDate());
+        department.updateDepartment(newName, newDescription, newEstablishedDate);
 
-        // 저장후 변환
+        // 저장 후 변환
         return DepartmentDto.fromEntity(department);
     }
+
 
     @Transactional
     public void deleteDepartment(Long id) {

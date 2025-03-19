@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/departments")
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class DepartmentController {
         return ResponseEntity.ok(departmentService.getDepartments(name, description, nextIdAfter, sortBy, size));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<DepartmentDto> updateDepartment(
             @PathVariable Long id,
             @RequestBody DepartmentUpdateRequest request) {

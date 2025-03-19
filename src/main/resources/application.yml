@@ -6,6 +6,7 @@ spring:
   servlet:
     multipart:
       enabled: true
+
   jpa:
     hibernate:
       ddl-auto: update  # 테이블 자동 생성 (기존 테이블 유지)
@@ -38,3 +39,4 @@ springdoc:
     doc-expansion: none
     filter: true
     show-extensions: true
+
