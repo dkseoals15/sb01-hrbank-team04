@@ -4,7 +4,9 @@ import com.codeit.sb01hrbankteam04.global.entity.BaseUpdatableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "department")
@@ -21,11 +23,18 @@ public class Department extends BaseUpdatableEntity {
     private String description;
 
     @Column(name = "established_at", nullable = false)
-    private LocalDate establishedDate;
+    private Instant establishedDate;
 
-    public void updateDepartment(String name, String description, LocalDate establishedDate) {
+    public void updateDepartment(String name, String description, Instant establishedDate) {
         this.name = name;
         this.description = description;
         this.establishedDate = establishedDate;
+    }
+
+
+    //Instant를 UTC 기준으로 "00:00:00"으로 변환하여 날짜만 저장
+    private Instant toUtcStartOfDay(Instant instant) {
+        if (instant == null) return null;
+        return instant.atZone(ZoneOffset.UTC).toLocalDate().atStartOfDay().toInstant(ZoneOffset.UTC);
     }
 }

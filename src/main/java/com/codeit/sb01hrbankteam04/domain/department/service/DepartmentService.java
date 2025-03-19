@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
@@ -38,7 +39,7 @@ public class DepartmentService {
         Department department = Department.builder()
                 .name(request.name())
                 .description(request.description())
-                .establishedDate(request.establishedDate())
+                .establishedDate(request.getEstablishedDateAsInstant())
                 .build();
 
         // 저장 및 응답 봔환
@@ -95,7 +96,7 @@ public class DepartmentService {
         // 기존 값 유지하면서 수정된 값만 반영
         String newName = request.name() != null ? request.name() : department.getName();
         String newDescription = request.description() != null ? request.description() : department.getDescription();
-        LocalDate newEstablishedDate = request.establishedDate() != null ? request.establishedDate() : department.getEstablishedDate();
+        Instant newEstablishedDate = request.establishedDate() != null ? request.getEstablishedDateAsInstant() : department.getEstablishedDate();
 
         // 중복 이름 체크 (name이 null이 아닐 때만 실행!)
         if (request.name() != null) {

@@ -9,15 +9,15 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update  # 테이블 자동 생성 (기존 테이블 유지)
+      ddl-auto: none
     database: postgresql
   transaction:
     default-timeout: 30
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/hrbank  # 새로운 DB 이름 적용
-    username: hrbank_admin  # 새로운 사용자 적용
-    password: "!hrbank_admin@04" # 새로운 비밀번호 적용
+    url: jdbc:postgresql://localhost:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 server:
   port: 8080
