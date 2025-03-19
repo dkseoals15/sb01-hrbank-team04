@@ -35,15 +35,13 @@ public class FileServiceImpl implements FileService {
   @Override
   public FileDto create(MultipartFile file, FileType fileType) throws IOException {
     File saveFile = fileRepository.save(fileMapper.toEntity(file));
-
-    saveFile.updateName(setFilename(saveFile, fileType));
-
-    fileStorage.put(saveFile.getId(), saveFile, file.getBytes());
+    setFilename(saveFile, fileType);
+    fileStorage.put(saveFile, file.getBytes());
     return fileMapper.toDto(saveFile);
   }
 
   // 파일 이름 설정
-  private String setFilename(File file, FileType fileType) {
+  private void setFilename(File file, FileType fileType) {
     String extension = fileType.getDefaultExtension();
     // 파일명
     Instant createdTime = fileRepository.findCreatedAtById(file.getId())
@@ -51,8 +49,9 @@ public class FileServiceImpl implements FileService {
     if (fileType == FileType.PROFILE) {
       extension = extractImageExtension(file.getName(), fileType.getDefaultExtension());
     }
-    return String.format(fileType.getNameFormat(), file.getId(), createdTime.getNano())
-        + extension;
+    String filename =
+        String.format(fileType.getNameFormat(), file.getId(), createdTime.getNano()) + extension;
+    file.updateName(filename);
   }
 
   // 확장자 추출
