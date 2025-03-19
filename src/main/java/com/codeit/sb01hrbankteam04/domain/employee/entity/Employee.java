@@ -3,7 +3,6 @@ package com.codeit.sb01hrbankteam04.domain.employee.entity;
 import com.codeit.sb01hrbankteam04.domain.department.Department;
 import com.codeit.sb01hrbankteam04.domain.file.entity.File;
 import com.codeit.sb01hrbankteam04.global.entity.BaseEntity;
-import com.codeit.sb01hrbankteam04.global.entity.BaseUpdatableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,10 +14,11 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "employee")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Employee extends BaseUpdatableEntity {
+public class Employee extends BaseEntity {
 
   @Column(nullable = false, length = 20)
   @Enumerated(EnumType.STRING) // TODO: 추후 수정요구해야 할 듯?
+  @Setter
   private EmployeeStatusType status;
 
   @Column(nullable = false, length = 100)

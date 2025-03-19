@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * FileController에 사용할 Swagger 문서 정의
  */
-@Tag(name = "Files", description = "파일 관련 API")
+@Tag(name = "파일 관리", description = "파일 관리 API")
 public interface FileControllerDocs {
 
   /**

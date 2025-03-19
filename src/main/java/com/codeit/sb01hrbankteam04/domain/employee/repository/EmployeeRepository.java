@@ -39,6 +39,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
   Optional<Employee> findByCode(String emp1001);
 
+
   /**
    * 마지막 배치가 완료된 시간을 기준으로 그 이후에 업데이트 된 파일이 존재하는지 확인
    *
@@ -56,4 +57,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
   @EntityGraph(attributePaths = {"department"})
   @Query("select e from Employee e")
   List<Employee> getAllForBackUp();
+
 }
