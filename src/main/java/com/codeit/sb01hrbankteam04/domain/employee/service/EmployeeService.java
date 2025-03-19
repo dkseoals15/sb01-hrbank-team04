@@ -76,11 +76,13 @@ public class EmployeeService {
 
   public List<EmployeeTrendResponse> getEmployeeTrend(LocalDate from, LocalDate to, String unit) {
     List<EmployeeTrendResponse> list = new ArrayList<>();
-    LocalDate min = LocalDate.of(1970,1,1); //이 기준일 논의 필요?
-    Instant min2 = min.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+    LocalDate min_LocalDate = LocalDate.of(1970,1,1); //이 기준일 논의 필요?
+    Instant min_Instant = min_LocalDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
 
-    ResponseEntity<Integer> employeeCount = getEmployeeCount(EmployeeStatusType.재직중, min, from);
-    int beforeCount = employeeCount.getBody();
+    Instant startInstant = from.atStartOfDay().toInstant(ZoneOffset.UTC);
+    int beforeCount = employeeRepository.countEmployees(EmployeeStatusType.재직중, min_Instant, startInstant);
+
+    list.add(new EmployeeTrendResponse(from, beforeCount, 0, 0));
 
     while (!from.isAfter(to)) {
       LocalDate nextFrom;
@@ -107,20 +109,19 @@ public class EmployeeService {
       Instant nextInstant = nextFrom.atStartOfDay(ZoneId.systemDefault()).toInstant();
       Instant currentInstant = from.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
-      Integer activeCount = employeeRepository.countEmployees(EmployeeStatusType.재직중, min2,
-          nextInstant);
-      Integer onLeaveCount = employeeRepository.countEmployees(EmployeeStatusType.휴직중, null,
-          nextInstant);
+      Integer activeCount = employeeRepository.countEmployees(EmployeeStatusType.재직중, min_Instant, nextInstant);
+      Integer onLeaveCount = employeeRepository.countEmployees(EmployeeStatusType.휴직중, min_Instant, nextInstant);
 
       int count = (activeCount != null ? activeCount : 0) + (onLeaveCount != null ? onLeaveCount : 0);
       int change = count - beforeCount;
       double percentage = calculatePercentage(count, change, beforeCount);
 
-      list.add(new EmployeeTrendResponse(from, Math.abs(count), change, percentage));
+      list.add(new EmployeeTrendResponse(nextFrom, Math.abs(count), change, percentage));
 
       beforeCount = count;
       from = nextFrom;
     }
+    list.remove(list.size() - 1);
 
     return list;
   }

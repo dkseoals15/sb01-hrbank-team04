@@ -35,7 +35,7 @@ public class EmployeeController {
   @GetMapping("/stats/distribution") //부서별 직원 분포,직무별 직원 분포
   public ResponseEntity<List<EmployeeDistributionResponse>> getEmployeeDistribution(
       @RequestParam(value = "groupBy", defaultValue = "department") String groupBy,
-      @RequestParam(value = "status", defaultValue = "ACTIVE") EmployeeStatusType status) {
+      @RequestParam(value = "status", defaultValue = "재직중") EmployeeStatusType status) {
     List<EmployeeDistributionResponse> employeeDistribution = employeeService.getEmployeeDistribution(
         groupBy, status);
     return ResponseEntity.ok(employeeDistribution);
