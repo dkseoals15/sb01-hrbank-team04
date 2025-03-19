@@ -21,10 +21,12 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.hibernate.envers.query.criteria.AuditProperty;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Repository
 @RequiredArgsConstructor
+@Transactional
 public class EmployeeChangeLogRepository {
 
   private final EntityManager entityManager;
