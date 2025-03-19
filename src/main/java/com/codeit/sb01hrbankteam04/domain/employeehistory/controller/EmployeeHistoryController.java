@@ -1,25 +1,17 @@
 package com.codeit.sb01hrbankteam04.domain.employeehistory.controller;
 
-import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.request.ChangeLogRequest;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.request.FilterRequest;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.CursorPageResponseEmployeeDto;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.DiffDto;
-import com.codeit.sb01hrbankteam04.domain.employeehistory.entity.EmployeeHistory;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.repository.EmployeeChangeLogRepository;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.type.ModifyType;
 import jakarta.persistence.EntityManager;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.query.AuditEntity;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,8 +55,6 @@ public class EmployeeHistoryController {
     List<DiffDto> diffs = repository.getRevisionDetails(revisionId);
     return ResponseEntity.ok(diffs);
   }
-
-
 
   @GetMapping("/count")
   public ResponseEntity<Long> getChangeLogCount(

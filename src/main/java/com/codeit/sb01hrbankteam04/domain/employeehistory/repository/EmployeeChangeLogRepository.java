@@ -6,12 +6,10 @@ import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.request.FilterRequ
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.ChangeLogDto;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.CursorPageResponseEmployeeDto;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.DiffDto;
-import com.codeit.sb01hrbankteam04.domain.employeehistory.entity.EmployeeHistory;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.type.ModifyType;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +21,6 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.hibernate.envers.query.criteria.AuditProperty;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Repository
@@ -150,11 +147,9 @@ public class EmployeeChangeLogRepository {
     RevisionType revtypeEnum = (RevisionType) result[1];
     int revtype = revtypeEnum.getRepresentation();
 
-    System.out.println("📌 조회된 employeeId: " + employeeId + " (revisionId: " + revisionId + ", revtype: " + revtype + ")");
-
     Employee current;
 
-    if (revtype == 2) {  // 🔥 삭제된 Employee 조회
+    if (revtype == 2) {  //  삭제시
       List<Object[]> deletedEmployees = auditReader.createQuery()
           .forRevisionsOfEntity(Employee.class, false, true)
           .add(AuditEntity.id().eq(employeeId))
@@ -162,11 +157,9 @@ public class EmployeeChangeLogRepository {
           .getResultList();
 
       if (deletedEmployees.isEmpty()) {
-        System.out.println("📌 ERROR: 삭제된 revisionId(" + revisionId + ")에서 Employee를 찾을 수 없음 (employeeId=" + employeeId + ")");
         return List.of();
       }
 
-      // ✅ Object[] 배열에서 Employee 객체 추출
       current = (Employee) deletedEmployees.get(0)[0];
 
     } else {
@@ -174,7 +167,6 @@ public class EmployeeChangeLogRepository {
     }
 
     if (current == null) {
-      System.out.println("📌 ERROR: 해당 revisionId(" + revisionId + ")에서 Employee를 찾을 수 없음 (employeeId=" + employeeId + ")");
       return List.of();
     }
 
@@ -190,7 +182,6 @@ public class EmployeeChangeLogRepository {
         Employee previous = auditReader.find(Employee.class, employeeId, previousRevisionId.longValue());
 
         if (previous == null) {
-          System.out.println("📌 ERROR: 이전 revisionId(" + previousRevisionId + ")에서 Employee를 찾을 수 없음 (employeeId=" + employeeId + ")");
           return List.of();
         }
 
@@ -200,8 +191,6 @@ public class EmployeeChangeLogRepository {
 
     return mapToDiffDto(current, revtype);
   }
-
-
 
   private List<DiffDto> compareChanges(Employee previous, Employee current) {
     List<DiffDto> changes = new ArrayList<>();
@@ -222,14 +211,11 @@ public class EmployeeChangeLogRepository {
       changes.add(new DiffDto("position", previous.getPosition(), current.getPosition()));
     }
     if (previous.getDepartment() == null && current.getDepartment() == null) {
-      // 둘 다 null이면 변경되지 않은 것 -> 출력 안 함
     } else if (previous.getDepartment() == null || current.getDepartment() == null) {
-      // 하나만 null이면 변경된 것 -> 출력
       changes.add(new DiffDto("department",
           previous.getDepartment() != null ? previous.getDepartment().getName() : "N/A",
           current.getDepartment() != null ? current.getDepartment().getName() : "N/A"));
     } else if (!Objects.equals(previous.getDepartment().getId(), current.getDepartment().getId())) {
-      // ✅ Department ID가 다를 때만 변경된 것으로 판단
       changes.add(new DiffDto("department",
           previous.getDepartment().getName(),
           current.getDepartment().getName()));
@@ -240,12 +226,6 @@ public class EmployeeChangeLogRepository {
 
     return changes;
   }
-
-
-
-
-
-
 
   private List<DiffDto> mapToDiffDto(Employee employee, int revtype) {
     List<DiffDto> diffs = new ArrayList<>();
