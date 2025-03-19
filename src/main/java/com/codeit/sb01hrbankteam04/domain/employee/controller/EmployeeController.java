@@ -26,6 +26,7 @@ public class EmployeeController {
       @RequestParam(value = "status", required = false) EmployeeStatusType status,
       @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
       @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
+    
     if (toDate == null) {
       toDate = LocalDate.now(); // 기본 값: 현재 날짜
     }
@@ -35,7 +36,8 @@ public class EmployeeController {
   @GetMapping("/stats/distribution") //부서별 직원 분포,직무별 직원 분포
   public ResponseEntity<List<EmployeeDistributionResponse>> getEmployeeDistribution(
       @RequestParam(value = "groupBy", defaultValue = "department") String groupBy,
-      @RequestParam(value = "status", defaultValue = "재직중") EmployeeStatusType status) {
+      @RequestParam(value = "status", defaultValue = "ACTIVE") EmployeeStatusType status) {
+    System.out.println(" EmployeeStatusType = " + status);
     List<EmployeeDistributionResponse> employeeDistribution = employeeService.getEmployeeDistribution(
         groupBy, status);
     return ResponseEntity.ok(employeeDistribution);
@@ -73,6 +75,4 @@ public class EmployeeController {
         return to.minusMonths(12);
     }
   }
-
-
 }

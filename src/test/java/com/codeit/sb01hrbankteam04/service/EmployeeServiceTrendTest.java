@@ -47,7 +47,7 @@ class EmployeeServiceTrendTest {
   // 퇴사한 직원 상태를 RESIGNED로 변경
   private void updateResignedEmployeeStatus(Employee employee) {
     
-    employee.setStatus(EmployeeStatusType.휴직중);
+    employee.setStatus(EmployeeStatusType.ACTIVE.ON_LEAVE);
 
     Instant resignedAt = LocalDate.of(2023, 4, 30).atStartOfDay(ZoneOffset.UTC).toInstant();
 
@@ -84,47 +84,47 @@ class EmployeeServiceTrendTest {
     janitorDepartment = createDepartment("Janitor", "Handles cleaning and maintenance", 15);
 
     Employee employee1 = addEmployee("부장", financeDepartment, "finance1@example.com", 2023, 1, 5,
-        EmployeeStatusType.재직중);
-    addEmployee("부장", financeDepartment, "finance2@example.com", 2023, 12, 10, EmployeeStatusType.재직중);
+        EmployeeStatusType.ACTIVE);
+    addEmployee("부장", financeDepartment, "finance2@example.com", 2023, 12, 10, EmployeeStatusType.ACTIVE);
 
     Employee employee2 = addEmployee("과장", backEndDepartment, "backend1@example.com", 2023, 3, 12,
-        EmployeeStatusType.재직중);
-    addEmployee("과장", backEndDepartment, "backend2@example.com", 2023, 4, 15, EmployeeStatusType.재직중);
-    addEmployee("과장", backEndDepartment, "backend3@example.com", 2023, 5, 18, EmployeeStatusType.재직중);
+        EmployeeStatusType.ACTIVE);
+    addEmployee("과장", backEndDepartment, "backend2@example.com", 2023, 4, 15, EmployeeStatusType.ACTIVE);
+    addEmployee("과장", backEndDepartment, "backend3@example.com", 2023, 5, 18, EmployeeStatusType.ACTIVE);
 
-    addEmployee("대리", frontEndDepartment, "frontend1@example.com", 2023, 6, 22, EmployeeStatusType.재직중);
-    addEmployee("대리", frontEndDepartment, "frontend2@example.com", 2023, 7, 25, EmployeeStatusType.재직중);
-    addEmployee("대리", frontEndDepartment, "frontend3@example.com", 2023, 8, 28, EmployeeStatusType.재직중);
+    addEmployee("대리", frontEndDepartment, "frontend1@example.com", 2023, 6, 22, EmployeeStatusType.ACTIVE);
+    addEmployee("대리", frontEndDepartment, "frontend2@example.com", 2023, 7, 25, EmployeeStatusType.ACTIVE);
+    addEmployee("대리", frontEndDepartment, "frontend3@example.com", 2023, 8, 28, EmployeeStatusType.ACTIVE);
 
-    addEmployee("사원", managementDepartment, "management1@example.com", 2023, 9, 1, EmployeeStatusType.재직중);
-    addEmployee("사원", managementDepartment, "management2@example.com", 2023, 10, 3, EmployeeStatusType.재직중);
+    addEmployee("사원", managementDepartment, "management1@example.com", 2023, 9, 1, EmployeeStatusType.ACTIVE);
+    addEmployee("사원", managementDepartment, "management2@example.com", 2023, 10, 3, EmployeeStatusType.ACTIVE);
 
-    addEmployee("부장", janitorDepartment, "janitor1@example.com", 2023, 11, 5, EmployeeStatusType.재직중);
-    addEmployee("부장", janitorDepartment, "janitor2@example.com", 2023, 12, 8, EmployeeStatusType.재직중);
+    addEmployee("부장", janitorDepartment, "janitor1@example.com", 2023, 11, 5, EmployeeStatusType.ACTIVE);
+    addEmployee("부장", janitorDepartment, "janitor2@example.com", 2023, 12, 8, EmployeeStatusType.ACTIVE);
 
-    addEmployee("과장", financeDepartment, "finance3@example.com", 2023, 1, 7, EmployeeStatusType.재직중);
-    addEmployee("과장", financeDepartment, "finance4@example.com", 2023, 12, 12, EmployeeStatusType.재직중);
+    addEmployee("과장", financeDepartment, "finance3@example.com", 2023, 1, 7, EmployeeStatusType.ACTIVE);
+    addEmployee("과장", financeDepartment, "finance4@example.com", 2023, 12, 12, EmployeeStatusType.ACTIVE);
 
     Employee employee3 = addEmployee("대리", backEndDepartment, "backend4@example.com", 2023, 3, 15,
-        EmployeeStatusType.재직중);
-    addEmployee("대리", backEndDepartment, "backend5@example.com", 2023, 4, 20, EmployeeStatusType.재직중);
+        EmployeeStatusType.ACTIVE);
+    addEmployee("대리", backEndDepartment, "backend5@example.com", 2023, 4, 20, EmployeeStatusType.ACTIVE);
 
-    addEmployee("사원", frontEndDepartment, "frontend4@example.com", 2023, 5, 23, EmployeeStatusType.재직중);
-    addEmployee("사원", frontEndDepartment, "frontend5@example.com", 2023, 6, 26, EmployeeStatusType.재직중);
+    addEmployee("사원", frontEndDepartment, "frontend4@example.com", 2023, 5, 23, EmployeeStatusType.ACTIVE);
+    addEmployee("사원", frontEndDepartment, "frontend5@example.com", 2023, 6, 26, EmployeeStatusType.ACTIVE);
 
-    addEmployee("부장", managementDepartment, "management3@example.com", 2023, 7, 29, EmployeeStatusType.재직중);
-    addEmployee("부장", managementDepartment, "management4@example.com", 2023, 8, 5, EmployeeStatusType.재직중);
+    addEmployee("부장", managementDepartment, "management3@example.com", 2023, 7, 29, EmployeeStatusType.ACTIVE);
+    addEmployee("부장", managementDepartment, "management4@example.com", 2023, 8, 5, EmployeeStatusType.ACTIVE);
 
-    addEmployee("과장", janitorDepartment, "janitor3@example.com", 2023, 9, 9, EmployeeStatusType.재직중);
-    addEmployee("과장", janitorDepartment, "janitor4@example.com", 2023, 10, 14, EmployeeStatusType.재직중);
+    addEmployee("과장", janitorDepartment, "janitor3@example.com", 2023, 9, 9, EmployeeStatusType.ACTIVE);
+    addEmployee("과장", janitorDepartment, "janitor4@example.com", 2023, 10, 14, EmployeeStatusType.ACTIVE);
 
-    addEmployee("대리", financeDepartment, "finance5@example.com", 2023, 11, 17, EmployeeStatusType.재직중);
-    addEmployee("대리", financeDepartment, "finance6@example.com", 2023, 12, 21, EmployeeStatusType.재직중);
+    addEmployee("대리", financeDepartment, "finance5@example.com", 2023, 11, 17, EmployeeStatusType.ACTIVE);
+    addEmployee("대리", financeDepartment, "finance6@example.com", 2023, 12, 21, EmployeeStatusType.ACTIVE);
 
-    addEmployee("사원", backEndDepartment, "backend6@example.com", 2023, 1, 24, EmployeeStatusType.재직중);
-    addEmployee("사원", backEndDepartment, "backend7@example.com", 2023, 12, 27, EmployeeStatusType.재직중);
+    addEmployee("사원", backEndDepartment, "backend6@example.com", 2023, 1, 24, EmployeeStatusType.ACTIVE);
+    addEmployee("사원", backEndDepartment, "backend7@example.com", 2023, 12, 27, EmployeeStatusType.ACTIVE);
     Employee employee4 = addEmployee("사원", backEndDepartment, "backend8@example.com", 2023, 3, 27,
-        EmployeeStatusType.재직중);
+        EmployeeStatusType.ACTIVE);
     
     //사직 시 처리되는 지 확인
     updateResignedEmployeeStatus(employee1);

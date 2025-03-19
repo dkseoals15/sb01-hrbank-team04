@@ -41,13 +41,13 @@ public class EmployeeServiceGetEmployeeCountTest {
         LocalDate.now().minusYears(10).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
     department = departmentRepository.save(department);
 
-    Employee employee1 = new Employee(EmployeeStatusType.재직중, "John Doe", "john.doe@example.com", "EMP123", department, "부장", LocalDate.of(2023, 1, 10).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
+    Employee employee1 = new Employee(EmployeeStatusType.ACTIVE, "John Doe", "john.doe@example.com", "EMP123", department, "부장", LocalDate.of(2023, 1, 10).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
     employeeRepository.save(employee1);
 
-    Employee employee2 = new Employee(EmployeeStatusType.휴직중, "Jane Smith", "jane.smith@example.com", "EMP456", department, "부장", LocalDate.of(2024, 2, 15).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
+    Employee employee2 = new Employee(EmployeeStatusType.ON_LEAVE, "Jane Smith", "jane.smith@example.com", "EMP456", department, "부장", LocalDate.of(2024, 2, 15).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
     employeeRepository.save(employee2);
 
-    Employee employee3 = new Employee(EmployeeStatusType.휴직중, "Jane2 Smith", "jane2.smith@example.com", "EMP4561", department, "부장", LocalDate.of(2023, 3, 15).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
+    Employee employee3 = new Employee(EmployeeStatusType.ON_LEAVE, "Jane2 Smith", "jane2.smith@example.com", "EMP4561", department, "부장", LocalDate.of(2023, 3, 15).atStartOfDay().toInstant(java.time.ZoneOffset.UTC), null);
     employeeRepository.save(employee3);
 
   }
@@ -60,7 +60,7 @@ public class EmployeeServiceGetEmployeeCountTest {
 
   @Test
   void testCountEmployees_ByStatus() {
-    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(EmployeeStatusType.재직중, null,
+    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(EmployeeStatusType.ACTIVE, null,
         null);
     assertThat(employeeCount.getBody()).isEqualTo(1);
   }

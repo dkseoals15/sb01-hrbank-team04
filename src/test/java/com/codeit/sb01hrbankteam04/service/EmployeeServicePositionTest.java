@@ -76,7 +76,7 @@ public class EmployeeServicePositionTest {
   private void addEmployeesByPosition(Department department, String position, int count) {
     for (int i = 1; i <= count; i++) {
       Employee employee = new Employee(
-          EmployeeStatusType.재직중, // 상태 설정 (예: EmployeeStatusType.재직중, 휴직중 등)
+          EmployeeStatusType.ACTIVE, // 상태 설정 (예: EmployeeStatusType.재직중, 휴직중 등)
           position + " " + department.getName() + " Employee " + i, // 이름 설정
           position.toLowerCase() + "." + department.getName().toLowerCase() + i + "@example.com",
           // 이메일 설정
@@ -94,7 +94,7 @@ public class EmployeeServicePositionTest {
 
     for (int i = 1; i <= 5; i++) {
       Employee employee = new Employee(
-          EmployeeStatusType.휴직중, // 상태 설정 (예: EmployeeStatusType.휴직중, 재직중 등)
+          EmployeeStatusType.ON_LEAVE, // 상태 설정 (예: EmployeeStatusType.휴직중, 재직중 등)
           position + "2 " + department.getName() + " Employee " + i, // 이름 설정
           position.toLowerCase() + "2." + department.getName().toLowerCase() + i + "@example.com",
           // 이메일 설정
@@ -116,7 +116,7 @@ public class EmployeeServicePositionTest {
   void 직함별_직원_분포_조회() {
     // ✅ position 기준 직원 분포 조회
     List<EmployeeDistributionResponse> positionDistribution = employeeService.getEmployeeDistribution(
-        "position", EmployeeStatusType.재직중);
+        "position", EmployeeStatusType.ACTIVE);
 
     // ✅ 기대되는 직급별 직원 수 및 비율 (정확한 직원 수 반영)
     Map<String, EmployeeDistributionResponse> expectedPosition = Map.of(
@@ -150,7 +150,7 @@ public class EmployeeServicePositionTest {
   public void 상태별_직원_분포_조회() {
     // ✅ position 기준 직원 분포 조회
     List<EmployeeDistributionResponse> positionDistribution2 = employeeService.getEmployeeDistribution(
-        "position", EmployeeStatusType.휴직중);
+        "position", EmployeeStatusType.ON_LEAVE);
 
     // ✅ 기대되는 직급별 직원 수 및 비율 (정확한 직원 수 반영)
     Map<String, EmployeeDistributionResponse> expectedPosition2 = Map.of(
@@ -190,7 +190,7 @@ public class EmployeeServicePositionTest {
   }
   @Test
   public void ON_LEAVE_직원_수(){
-    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(Status.ON_LEAVE, null, null);
+    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(EmployeeStatusType.ON_LEAVE, null, null);
     assertThat(employeeCount.getBody()).isEqualTo(100); // ON_LEAVE - 100, ACTIVE - 60
   }
 

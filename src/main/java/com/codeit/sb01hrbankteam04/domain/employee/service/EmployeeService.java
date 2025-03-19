@@ -80,7 +80,7 @@ public class EmployeeService {
     Instant min_Instant = min_LocalDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
 
     Instant startInstant = from.atStartOfDay().toInstant(ZoneOffset.UTC);
-    int beforeCount = employeeRepository.countEmployees(EmployeeStatusType.재직중, min_Instant, startInstant);
+    int beforeCount = employeeRepository.countEmployees(EmployeeStatusType.ACTIVE, min_Instant, startInstant);
 
     list.add(new EmployeeTrendResponse(from, beforeCount, 0, 0));
 
@@ -109,8 +109,8 @@ public class EmployeeService {
       Instant nextInstant = nextFrom.atStartOfDay(ZoneId.systemDefault()).toInstant();
       Instant currentInstant = from.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
-      Integer activeCount = employeeRepository.countEmployees(EmployeeStatusType.재직중, min_Instant, nextInstant);
-      Integer onLeaveCount = employeeRepository.countEmployees(EmployeeStatusType.휴직중, min_Instant, nextInstant);
+      Integer activeCount = employeeRepository.countEmployees(EmployeeStatusType.ACTIVE, min_Instant, nextInstant);
+      Integer onLeaveCount = employeeRepository.countEmployees(EmployeeStatusType.ON_LEAVE, min_Instant, nextInstant);
 
       int count = (activeCount != null ? activeCount : 0) + (onLeaveCount != null ? onLeaveCount : 0);
       int change = count - beforeCount;

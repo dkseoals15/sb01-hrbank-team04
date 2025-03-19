@@ -66,7 +66,7 @@ class EmployeeServiceDepartmentTest {
   private void addEmployees(Department department, int head, int mid, int small) {
     for (int i = 1; i <= head; i++) {
       Employee employee = new Employee(
-          EmployeeStatusType.재직중, // 상태 설정 (예: EmployeeStatusType.재직중, EmployeeStatusType.휴직중 등)
+          EmployeeStatusType.ACTIVE, // 상태 설정 (예: EmployeeStatusType.재직중, EmployeeStatusType.휴직중 등)
           department.getName() + " Employee부장 " + i, // 이름 설정
           department.getName().toLowerCase() + i + "@부장example.com", // 이메일 설정
           "EMP_" + department.getName().substring(0, 3).toUpperCase() + "_" + i + "_" + System.nanoTime(), // 유니크한 직원 코드 생성
@@ -80,7 +80,7 @@ class EmployeeServiceDepartmentTest {
     }
     for (int i = 1; i <= mid; i++) {
       Employee employee = new Employee(
-          EmployeeStatusType.재직중, // 상태 설정 (예: EmployeeStatusType.재직중, EmployeeStatusType.휴직중 등)
+          EmployeeStatusType.ACTIVE, // 상태 설정 (예: EmployeeStatusType.재직중, EmployeeStatusType.휴직중 등)
           department.getName() + " Employee과장 " + i, // 이름 설정
           department.getName().toLowerCase() + i + "@과장example.com", // 이메일 설정
           "EMP_" + department.getName().substring(0, 3).toUpperCase() + "_" + i + "_" + System.nanoTime(), // 유니크한 직원 코드 생성
@@ -94,7 +94,7 @@ class EmployeeServiceDepartmentTest {
     }
     for (int i = 1; i <= small; i++) {
       Employee employee = new Employee(
-          EmployeeStatusType.재직중, // 상태 설정 (예: EmployeeStatusType.재직중, EmployeeStatusType.휴직중 등)
+          EmployeeStatusType.ACTIVE, // 상태 설정 (예: EmployeeStatusType.재직중, EmployeeStatusType.휴직중 등)
           department.getName() + " Employee대리 " + i, // 이름 설정
           department.getName().toLowerCase() + i + "@대리example.com", // 이메일 설정
           "EMP_" + department.getName().substring(0, 3).toUpperCase() + "_" + i + "_" + System.nanoTime(), // 유니크한 직원 코드 생성
@@ -112,7 +112,7 @@ class EmployeeServiceDepartmentTest {
   @Test
   void 부서별_직원_분포_조회() {
     List<EmployeeDistributionResponse> employeeDistribution = employeeService.getEmployeeDistribution(
-        "department", EmployeeStatusType.재직중);
+        "department", EmployeeStatusType.ACTIVE);
 
     // 기대되는 부서별 직원 수 및 비율
     Map<String, EmployeeDistributionResponse> expected = Map.of(

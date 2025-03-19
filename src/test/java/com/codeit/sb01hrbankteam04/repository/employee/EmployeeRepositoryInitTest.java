@@ -41,7 +41,7 @@ public class EmployeeRepositoryInitTest {
   @Test
   void 직원_저장() {
     Employee employee = new Employee(
-        EmployeeStatusType.재직중, // 또는 다른 상태값을 설정 (예: 재직중, 휴직중 등)
+        EmployeeStatusType.ACTIVE, // 또는 다른 상태값을 설정 (예: 재직중, 휴직중 등)
         "John Doe",
         "john.doe@example.com",
         "EMP12345",
@@ -61,7 +61,7 @@ public class EmployeeRepositoryInitTest {
   @Test
   void 이메일로_직원찾기() {
     Employee employee = new Employee(
-        EmployeeStatusType.재직중, // 또는 다른 상태값으로 설정
+        EmployeeStatusType.ACTIVE, // 또는 다른 상태값으로 설정
         "Jane Doe",
         "jane.doe@example.com",
         "EMP67890",
@@ -82,7 +82,7 @@ public class EmployeeRepositoryInitTest {
   @Test
   void 직원_삭제() {
     Employee employee = new Employee(
-        EmployeeStatusType.재직중, // 또는 다른 상태값을 설정 (예: 재직중, 휴직중 등)
+        EmployeeStatusType.ACTIVE, // 또는 다른 상태값을 설정 (예: 재직중, 휴직중 등)
         "Alice Brown",
         "alice.brown@example.com",
         "EMP99999",
