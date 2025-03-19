@@ -3,11 +3,11 @@ package com.codeit.sb01hrbankteam04.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeit.sb01hrbankteam04.domain.department.Department;
+import com.codeit.sb01hrbankteam04.domain.department.DepartmentRepository;
 import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
 import com.codeit.sb01hrbankteam04.domain.employee.entity.EmployeeStatusType;
 import com.codeit.sb01hrbankteam04.domain.employee.repository.EmployeeRepository;
 import com.codeit.sb01hrbankteam04.domain.employee.service.EmployeeService;
-import com.codeit.sb01hrbankteam04.repository.DepartmentRepository;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,12 +1,12 @@
 package com.codeit.sb01hrbankteam04.service;
 
 import com.codeit.sb01hrbankteam04.domain.department.Department;
+import com.codeit.sb01hrbankteam04.domain.department.DepartmentRepository;
 import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
 import com.codeit.sb01hrbankteam04.domain.employee.entity.EmployeeStatusType;
 import com.codeit.sb01hrbankteam04.domain.employee.repository.EmployeeRepository;
 import com.codeit.sb01hrbankteam04.domain.employee.service.EmployeeService;
 import com.codeit.sb01hrbankteam04.dto.employee.EmployeeTrendResponse;
-import com.codeit.sb01hrbankteam04.repository.DepartmentRepository;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
