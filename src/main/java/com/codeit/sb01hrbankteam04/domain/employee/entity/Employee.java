@@ -9,11 +9,16 @@ import lombok.*;
 import java.time.Instant;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 @Entity
 @Table(name = "employee")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Audited
+// TODO: update 되도록 해야 함! 추후 수정사항 말해줘야 할 듯
 public class Employee extends BaseUpdatableEntity {
 
   @Column(nullable = false, length = 20)
@@ -32,7 +37,8 @@ public class Employee extends BaseUpdatableEntity {
 
   @ManyToOne
   @JoinColumn(name = "department_id", foreignKey = @ForeignKey(name = "fk_department"))
-  @OnDelete(action= OnDeleteAction.SET_NULL)
+  @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED) // department_id 만 추적
+  @OnDelete(action = OnDeleteAction.SET_NULL)
   private Department department;
 
   @Column(nullable = false, length = 50)
@@ -44,6 +50,7 @@ public class Employee extends BaseUpdatableEntity {
   @OneToOne
   @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"))
   @OnDelete(action= OnDeleteAction.SET_NULL)
+  @NotAudited // 프로필은 추적하지 않음
   private File profile;
 
   public Employee(EmployeeStatusType status, String name,String email, String code,

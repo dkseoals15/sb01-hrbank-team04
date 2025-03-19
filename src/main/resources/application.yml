@@ -11,6 +11,11 @@ spring:
     hibernate:
       ddl-auto: none
     database: postgresql
+    properties:
+      org.hibernate.envers.audit_table_suffix: _history_detail
+      org.hibernate.envers.revision_field_name: revisionId
+      org.hibernate.envers.revision_type_field_name: revtype
+      org.hibernate.envers.store_data_at_delete: true
     open-in-view: false
   transaction:
     default-timeout: 30
