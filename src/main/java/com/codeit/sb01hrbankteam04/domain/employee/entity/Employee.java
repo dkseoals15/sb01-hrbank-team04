@@ -4,6 +4,7 @@ import com.codeit.sb01hrbankteam04.domain.department.Department;
 import com.codeit.sb01hrbankteam04.domain.file.entity.File;
 import com.codeit.sb01hrbankteam04.global.entity.BaseUpdatableEntity;
 import jakarta.persistence.*;
+import java.util.Random;
 import lombok.*;
 
 import java.time.Instant;
