@@ -18,18 +18,18 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
     @Query("""
         SELECT d FROM Department d
-        WHERE (:name IS NULL OR d.name LIKE %:name%)
-        AND (:description IS NULL OR d.description LIKE %:description%)
-        AND (:nextIdAfter IS NULL OR d.id > :nextIdAfter)
+        WHERE (:nameOrDescription IS NULL OR d.name LIKE %:nameOrDescription% OR d.description LIKE %:nameOrDescription%)
+        AND (:idAfter IS NULL OR d.id > :idAfter)
         ORDER BY 
-            CASE WHEN :sortBy = 'name' THEN d.name END ASC,
-            CASE WHEN :sortBy = 'establishedDate' THEN d.establishedDate END ASC
+            CASE WHEN :sortField = 'name' AND :sortDirection = 'asc' THEN d.name END ASC,
+            CASE WHEN :sortField = 'name' AND :sortDirection = 'desc' THEN d.name END DESC,
+            CASE WHEN :sortField = 'establishedDate' AND :sortDirection = 'asc' THEN d.establishedDate END ASC,
+            CASE WHEN :sortField = 'establishedDate' AND :sortDirection = 'desc' THEN d.establishedDate END DESC
     """)
     List<Department> findDepartmentsByCursor(
-            @Param("name") String name,
-            @Param("description") String description,
-            @Param("nextIdAfter") Long nextIdAfter,
-            @Param("sortBy") String sortBy,
-            Pageable pageable
-    );
+            @Param("nameOrDescription") String nameOrDescription,
+            @Param("idAfter") Long idAfter,
+            @Param("sortField") String sortField,
+            @Param("sortDirection") String sortDirection,
+            @Param("size") int size);
 }

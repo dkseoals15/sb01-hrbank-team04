@@ -32,14 +32,15 @@ public class DepartmentController {
     }
 
     @GetMapping
-    public ResponseEntity<CursorPageResponseDepartmentDto> getDepartments(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) Long nextIdAfter,
-            @RequestParam(defaultValue = "establishedDate") String sortBy,
-            @RequestParam(defaultValue = "10") int size) {
+    public CursorPageResponseDepartmentDto getDepartments(
+            @RequestParam(required = false) String nameOrDescription,
+            @RequestParam(required = false) Long idAfter,
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "establishedDate") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        return ResponseEntity.ok(departmentService.getDepartments(name, description, nextIdAfter, sortBy, size));
+        return departmentService.getDepartments(nameOrDescription, idAfter, cursor, size, sortField, sortDirection);
     }
 
     @PatchMapping("/{id}")

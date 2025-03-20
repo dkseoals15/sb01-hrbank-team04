@@ -48,14 +48,11 @@ public class DepartmentService {
 
     @Transactional(readOnly = true)
     public CursorPageResponseDepartmentDto getDepartments(
-            String name, String description, Long nextIdAfter, String sortBy, int size) {
-
-        // 페이지 정보 생성
-        Pageable pageable = PageRequest.of(0, size);
+            String nameOrDescription, Long idAfter, String cursor, int size, String sortField, String sortDirection) {
 
         // 부서 목록 조회 (페이징 적용)
         List<Department> departments = departmentRepository.findDepartmentsByCursor(
-                name, description, nextIdAfter, sortBy, pageable);
+                nameOrDescription, idAfter, sortField, sortDirection, size);
 
         // `DepartmentDto` 변환
         List<DepartmentDto> departmentDtos = departments.stream()
@@ -96,7 +93,8 @@ public class DepartmentService {
         // 기존 값 유지하면서 수정된 값만 반영
         String newName = request.name() != null ? request.name() : department.getName();
         String newDescription = request.description() != null ? request.description() : department.getDescription();
-        Instant newEstablishedDate = request.establishedDate() != null ? request.getEstablishedDateAsInstant() : department.getEstablishedDate();
+        Instant
+                newEstablishedDate = request.establishedDate() != null ? request.getEstablishedDateAsInstant() : department.getEstablishedDate();
 
         // 중복 이름 체크 (name이 null이 아닐 때만 실행!)
         if (request.name() != null) {
