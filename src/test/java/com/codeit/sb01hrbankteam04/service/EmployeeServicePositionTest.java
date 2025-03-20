@@ -2,13 +2,13 @@ package com.codeit.sb01hrbankteam04.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codeit.sb01hrbankteam04.domain.department.Department;
-import com.codeit.sb01hrbankteam04.domain.department.DepartmentRepository;
+import com.codeit.sb01hrbankteam04.domain.department.entity.Department;
+import com.codeit.sb01hrbankteam04.domain.department.repository.DepartmentRepository;
+import com.codeit.sb01hrbankteam04.domain.employee.dto.EmployeeDistributionResponse;
 import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
 import com.codeit.sb01hrbankteam04.domain.employee.entity.EmployeeStatusType;
 import com.codeit.sb01hrbankteam04.domain.employee.repository.EmployeeRepository;
 import com.codeit.sb01hrbankteam04.domain.employee.service.EmployeeService;
-import com.codeit.sb01hrbankteam04.dto.employee.EmployeeDistributionResponse;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,8 @@ public class EmployeeServicePositionTest {
   private Department janitorDepartment;
 
   private Department createDepartment(String name, String description, int yearsOld) {
-    Department department = new Department(name, description, LocalDate.now().minusYears(yearsOld).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
+    Department department = new Department(name, description,
+        LocalDate.now().minusYears(yearsOld).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
     return departmentRepository.save(department);
   }
 
@@ -184,9 +185,11 @@ public class EmployeeServicePositionTest {
     ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(null, null, null);
     assertThat(employeeCount.getBody()).isEqualTo(160); // ON_LEAVE - 100, ACTIVE - 60
   }
+
   @Test
-  public void ON_LEAVE_직원_수(){
-    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(EmployeeStatusType.ON_LEAVE, null, null);
+  public void ON_LEAVE_직원_수() {
+    ResponseEntity<Integer> employeeCount = employeeService.getEmployeeCount(
+        EmployeeStatusType.ON_LEAVE, null, null);
     assertThat(employeeCount.getBody()).isEqualTo(100); // ON_LEAVE - 100, ACTIVE - 60
   }
 

@@ -13,5 +13,5 @@ import lombok.Builder;
  */
 @Builder
 public record FileDto(Long id, String filename, Long fileSize, String contentType, byte[] bytes) {
-
+  
 }

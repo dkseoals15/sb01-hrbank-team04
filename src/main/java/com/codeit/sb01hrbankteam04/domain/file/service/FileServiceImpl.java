@@ -34,7 +34,8 @@ public class FileServiceImpl implements FileService {
   @Transactional
   @Override
   public FileDto create(MultipartFile file, FileType fileType) throws IOException {
-    File saveFile = fileRepository.save(fileMapper.toEntity(file));
+    System.out.println(file.getOriginalFilename());
+    File saveFile = fileRepository.saveAndFlush(fileMapper.toEntity(file));
     setFilename(saveFile, fileType);
     fileStorage.put(saveFile, file.getBytes());
     return fileMapper.toDto(saveFile);
@@ -43,6 +44,7 @@ public class FileServiceImpl implements FileService {
   // 파일 이름 설정
   private void setFilename(File file, FileType fileType) {
     String extension = fileType.getDefaultExtension();
+    System.out.println("SetFilename: " + file.getId());
     // 파일명
     Instant createdTime = fileRepository.findCreatedAtById(file.getId())
         .orElseThrow(() -> new CustomException(ErrorCode.FILE_NOT_FOUND));

@@ -14,6 +14,11 @@ import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
 
+/**
+ * 직원의 변경 이력을 저장하는 엔티티 Hibernate Envers를 활용하여 리비전 정보를 관리함 커스텀하지 않고 기본 제공되는 revinfo 사용시 memo,
+ * ipAddress 정보를 추가할 수 없어서 아래와 같이 커스텀을 진행
+ */
+
 @Setter
 @Getter
 @Entity
@@ -27,14 +32,14 @@ public class EmployeeHistory {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long revisionId;
 
-  @Column
+  @Column(name = "created_at")
   @RevisionTimestamp
-  private Instant createdAt; // 엔티티 변경 시간
+  private Instant at; // 엔티티 변경 시간
 
   @Column
   private String memo;
 
   //작업자 ip 주소
-  @Column
-  private String modifiedBy;
+  @Column(name = "modified_by")
+  private String ipAddress;
 }

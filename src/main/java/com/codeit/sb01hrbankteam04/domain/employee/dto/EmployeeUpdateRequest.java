@@ -5,10 +5,9 @@ public record EmployeeUpdateRequest(
     String email,
     Long departmentId,
     String position,
-    String hireDate,
+    String hireDate, // TODO: Update 테스트용 수정
     String status,
     String memo
-)
-{
+) {
 
 }

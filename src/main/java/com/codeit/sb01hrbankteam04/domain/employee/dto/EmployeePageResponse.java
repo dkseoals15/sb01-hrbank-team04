@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class EmployeePageResponse {
+
   List<EmployeeResponse> content;
   String nextCursor;
   Long nextIdAfter;
@@ -23,7 +24,8 @@ public class EmployeePageResponse {
       int size,
       Long totalElements,
       boolean hasNext) {
-    return new EmployeePageResponse(employeeResponses, nextCursor, lastId, size, totalElements, hasNext);
+    return new EmployeePageResponse(employeeResponses, nextCursor, lastId, size, totalElements,
+        hasNext);
 
   }
 }
