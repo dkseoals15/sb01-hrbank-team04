@@ -13,6 +13,7 @@ public class EmployeeRevisionListener implements RevisionListener {
   }
 
   public static void setModified(String modified) {
+//    modified = "127.0.0.1"; // TODO: 아이피 임시로 넣어두기
     modifiedHolder.set(modified);
   }
 
@@ -28,7 +29,7 @@ public class EmployeeRevisionListener implements RevisionListener {
   public void newRevision(Object revisionEntity) {
     EmployeeHistory employeeHistory = (EmployeeHistory) revisionEntity;
     employeeHistory.setMemo(getMemo());
-    employeeHistory.setModifiedBy(getModified());
+    employeeHistory.setIpAddress(getModified());
   }
 
 }

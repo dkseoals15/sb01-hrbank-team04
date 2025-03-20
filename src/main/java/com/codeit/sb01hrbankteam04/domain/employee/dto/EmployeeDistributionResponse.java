@@ -1,4 +1,4 @@
-package com.codeit.sb01hrbankteam04.dto.employee;
+package com.codeit.sb01hrbankteam04.domain.employee.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

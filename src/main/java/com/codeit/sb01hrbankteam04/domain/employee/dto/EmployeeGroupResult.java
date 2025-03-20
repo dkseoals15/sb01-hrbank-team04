@@ -1,6 +1,7 @@
-package com.codeit.sb01hrbankteam04.dto.employee;
+package com.codeit.sb01hrbankteam04.domain.employee.dto;
 
 public class EmployeeGroupResult {
+
   private String groupName;
   private long count;
 

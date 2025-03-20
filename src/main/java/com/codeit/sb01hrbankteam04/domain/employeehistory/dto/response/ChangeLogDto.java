@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.RevisionType;
 
 @Data
@@ -42,8 +41,8 @@ public class ChangeLogDto {
         .type(ModifyType.fromRevisionType(revisionType))
         .employeeNumber(auditedEntity.getCode())
         .memo(revisionEntity.getMemo())
-        .ipAddress(revisionEntity.getModifiedBy())
-        .at(revisionEntity.getCreatedAt())
+        .ipAddress(revisionEntity.getIpAddress())
+        .at(revisionEntity.getAt())
         .build();
   }
 }

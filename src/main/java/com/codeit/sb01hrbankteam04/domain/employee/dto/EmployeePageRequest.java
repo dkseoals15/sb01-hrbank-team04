@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class EmployeePageRequest {
+
   private String nameOrEmail;
   private String employeeNumber;
   private String departmentName;

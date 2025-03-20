@@ -1,6 +1,5 @@
-package com.codeit.sb01hrbankteam04.dto.employee;
+package com.codeit.sb01hrbankteam04.domain.employee.dto;
 
-import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class EmployeeResponse {
+public class EmployeeUpdateResponse {
+
   private Long id;
   private String name;
   private String email;
@@ -18,9 +18,6 @@ public class EmployeeResponse {
   private String position;
   private String hireDate;
   private String status;
-  private Long profileImageId;
+  private Integer profileImageId;
 
-  public static EmployeeResponse fromEntity(Employee employee) {
-    return null;
-  }
 }

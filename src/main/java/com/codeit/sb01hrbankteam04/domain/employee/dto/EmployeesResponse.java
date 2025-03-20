@@ -1,4 +1,4 @@
-package com.codeit.sb01hrbankteam04.dto.employee;
+package com.codeit.sb01hrbankteam04.domain.employee.dto;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class EmployeesResponse {
+
   private List<EmployeeResponse> content;
   private String nextCursor;
   private Long nextIdAfter;

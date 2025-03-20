@@ -1,4 +1,4 @@
-package com.codeit.sb01hrbankteam04.dto.employee;
+package com.codeit.sb01hrbankteam04.domain.employee.dto;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class EmployeeTrendResponse {
+
   LocalDate date;
   int count;
   int change;

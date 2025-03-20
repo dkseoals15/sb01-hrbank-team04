@@ -1,7 +1,6 @@
 package com.codeit.sb01hrbankteam04.repository.employee;
 
-import com.codeit.sb01hrbankteam04.domain.department.Department;
-import com.codeit.sb01hrbankteam04.domain.department.DepartmentRepository;
+import com.codeit.sb01hrbankteam04.domain.department.repository.DepartmentRepository;
 import com.codeit.sb01hrbankteam04.domain.employee.entity.Employee;
 import com.codeit.sb01hrbankteam04.domain.employee.entity.EmployeeStatusType;
 import com.codeit.sb01hrbankteam04.domain.employee.repository.EmployeeRepository;
