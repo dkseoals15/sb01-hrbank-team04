@@ -12,6 +12,8 @@ import com.codeit.sb01hrbankteam04.global.exception.CustomException;
 import com.codeit.sb01hrbankteam04.global.exception.ErrorCode;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -306,8 +308,8 @@ public class EmployeeChangeLogRepository {
       changes.add(new DiffDto("email", previous.getEmail(), current.getEmail()));
     }
     if (!Objects.equals(previous.getJoinedAt(), current.getJoinedAt())) {
-      changes.add(new DiffDto("hireDate", previous.getJoinedAt().toString(),
-          current.getJoinedAt().toString()));
+      changes.add(new DiffDto("hireDate", convertInstantToLocalDate(previous.getJoinedAt()),
+          convertInstantToLocalDate(current.getJoinedAt())));
     }
     if (!Objects.equals(previous.getPosition(), current.getPosition())) {
       changes.add(new DiffDto("position", previous.getPosition(), current.getPosition()));
@@ -350,8 +352,8 @@ public class EmployeeChangeLogRepository {
         isDelete ? null : employee.getCode()));
     diffs.add(new DiffDto("email", isDelete ? employee.getEmail() : null,
         isDelete ? null : employee.getEmail()));
-    diffs.add(new DiffDto("hireDate", isDelete ? employee.getJoinedAt().toString() : null,
-        isDelete ? null : employee.getJoinedAt().toString()));
+    diffs.add(new DiffDto("hireDate", isDelete ? convertInstantToLocalDate(employee.getJoinedAt()): null,
+        isDelete ? null : convertInstantToLocalDate(employee.getJoinedAt())));
     diffs.add(new DiffDto("position", isDelete ? employee.getPosition() : null,
         isDelete ? null : employee.getPosition()));
     diffs.add(new DiffDto("department", isDelete ? employee.getDepartment().getName() : null,
@@ -362,4 +364,7 @@ public class EmployeeChangeLogRepository {
     return diffs;
   }
 
+  private String convertInstantToLocalDate(Instant instant) {
+    return instant.atZone(ZoneId.of("UTC")).toLocalDate().toString();
+  }
 }
