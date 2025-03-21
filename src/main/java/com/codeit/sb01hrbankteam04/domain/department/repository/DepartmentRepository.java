@@ -34,14 +34,16 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
 
   @Query("""
-          SELECT d FROM Department d
-          WHERE (:nameOrDescription IS NULL 
-              OR d.name LIKE %:nameOrDescription% 
-              OR d.description LIKE %:nameOrDescription%)
-          AND (:idAfter IS NULL OR d.id > :idAfter)
-      """)
+    SELECT d FROM Department d
+    WHERE (:nameOrDescription IS NULL 
+        OR d.name LIKE %:nameOrDescription% 
+        OR d.description LIKE %:nameOrDescription%)
+    AND (:idAfter IS NULL OR d.id > :idAfter)
+""")
   List<Department> findDepartmentsByCursor(
-      @Param("nameOrDescription") String nameOrDescription,
-      @Param("idAfter") Long idAfter,
-      Pageable pageable);
+          @Param("nameOrDescription") String nameOrDescription,
+          @Param("idAfter") Long idAfter,
+          Pageable pageable
+  );
+
 }
