@@ -7,6 +7,11 @@ spring:
         use_sql_comments: false
         highlight_sql: false
         generate_statistics: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
 
 logging:
   level:
