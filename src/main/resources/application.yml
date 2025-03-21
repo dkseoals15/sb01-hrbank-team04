@@ -2,7 +2,7 @@ spring:
   application:
     name: sb01-hrbank-team04
   profiles:
-    active: prod
+    active: dev
   servlet:
     multipart:
       enabled: true
