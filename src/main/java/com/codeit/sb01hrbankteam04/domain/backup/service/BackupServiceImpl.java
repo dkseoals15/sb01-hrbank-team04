@@ -20,8 +20,9 @@ import com.codeit.sb01hrbankteam04.global.util.ip.IPUtils;
 import com.opencsv.CSVWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -166,7 +167,9 @@ public class BackupServiceImpl implements BackupService {
         System.getProperty("user.dir") + "/temp/" + filename);
 
     // TODO: 생성 시 OOM 이슈 발생 할 수 있음 -> 해당 부분 고민해보기
-    try (CSVWriter writer = new CSVWriter(new FileWriter(backupFile))) {
+    try (CSVWriter writer = new CSVWriter(
+        new OutputStreamWriter(new FileOutputStream(backupFile), StandardCharsets.UTF_8))
+    ) {
       writer.writeNext(new String[]{"ID", "직원번호", "이름", "이메일", "부서", "직급", "입사일", "상태"});
       for (Employee employee : employees) {
         writer.writeNext(new String[]{
