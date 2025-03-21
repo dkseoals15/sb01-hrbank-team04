@@ -145,24 +145,39 @@ public class EmployeeService {
     //List 형태로 Page 받기
     List<Employee> employees = employeeRepository.findEmployeesByCursor(
         nameOrEmail, employeeNumber, departmentName, position,
-        hireDateFrom, hireDateTo, status, nextIdAfter, sortBy, sortDirection, pageable);
+        hireDateFrom, hireDateTo, status, cursor, sortBy, sortDirection, pageable);
 
     // pageResponse  dto로 변환
     List<EmployeeResponse> EmployeeResponses = employees.stream()
         .map(employeeMapper::toDto)
         .collect(Collectors.toList());
 
-    // next page
-    Long lastId =
-        employees.isEmpty() ? null : employees.get(employees.size() - 1).getId();//nextIdAfter, 현 employees의 마지막 직원의 id
+
+    //Long totalElements = 1L;
+    Long totalElements = employeeRepository.countPageTotalCount(
+        nameOrEmail, employeeNumber, departmentName, position,
+        hireDateFrom, hireDateTo, status );
+
+    //현재 페이지의 목록 크기
+    int pageSize = employees.size();
+
+    //nextIdAfter, 현 employees의 마지막 직원의 id
+    Long lastId = null;
+    if(size - pageSize > 0){
+      //null 맞음
+    }
+    else if(size - pageSize==0){
+      lastId = totalElements ==size ? null :employees.get(employees.size() - 1).getId();
+    }
+    
     //넥스트커서로, 분류기준에 따라 값을 가져야함.
     String nextCursor = lastId != null ? convertCursor(sortBy, employees.get(employees.size() - 1) ) : null;
     boolean hasNext = employees.size() == size;
 
-    Long totalElements = employeeRepository.count();
+
 
     return  EmployeePageResponse.from(
-        EmployeeResponses, nextCursor, lastId, size, totalElements, hasNext);
+        EmployeeResponses, nextCursor, lastId, pageSize, totalElements, hasNext);
   }
 
   // 커서의 값을 반환한다.
