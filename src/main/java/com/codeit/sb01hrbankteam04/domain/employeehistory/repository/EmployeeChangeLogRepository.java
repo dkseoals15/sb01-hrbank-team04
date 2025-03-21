@@ -77,7 +77,14 @@ public class EmployeeChangeLogRepository {
 
     boolean hasNext = logs.size() == request.pageSize();
     Long nextIdAfter = hasNext ? logs.get(logs.size() - 1).getId() : null;
-    String nextCursor = hasNext ? String.valueOf(logs.get(logs.size() - 1).getAt()) : null;
+
+    String nextCursor;
+
+    if ("at".equals(request.sortField())) {
+      nextCursor = hasNext ? String.valueOf(logs.get(logs.size() - 1).getAt()) : null;
+    } else {
+      nextCursor = hasNext ? String.valueOf(nextIdAfter) : null;
+    }
 
     return CursorPageResponseEmployeeDto.builder()
         .content(logs)
