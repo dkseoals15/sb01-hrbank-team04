@@ -35,6 +35,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import javax.management.InstanceAlreadyExistsException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -71,19 +72,16 @@ public class EmployeeService {
     Department department = departmentRepository.findById(employeeCreateRequest.departmentId())
         .orElseThrow(() -> new NoSuchElementException("Department not found"));
 
-    //이메일 검증-중복/형식
-    if (!isEmailValid(employeeCreateRequest.email())) {
-      throw new IOException("이메일이 유효하지 않습니다. email : " + employeeCreateRequest.email());
-    }
-
-    //TODO: multipartFile null 경우 분기 설정
-    //Cannot invoke "org.springframework.web.multipart.MultipartFile.getOriginalFilename()" because "file" is null
     //파일 저장
-    FileDto fileDto = fileService.create(optionalProfileRequest, FileType.PROFILE);
-
-    //nullable 파일
-    File nullableProfile = fileRepository.findById(fileDto.id()).orElse(null);
-
+    FileDto fileDto = null;
+    File nullableProfile =null;
+    
+    //파일이 있을 때 파일 create 및 파일 설정
+    if(optionalProfileRequest != null) {
+      fileDto = fileService.create(optionalProfileRequest, FileType.PROFILE);
+      nullableProfile = fileRepository.findById(fileDto.id()).orElse(null);
+    }
+    
     Employee employee = Employee.builder()
         .status(EmployeeStatusType.ACTIVE)
         .name(employeeCreateRequest.name())
@@ -98,11 +96,6 @@ public class EmployeeService {
     return employeeMapper.toDto(employee);
   }
 
-
-  //이메일 유효 검증- @를 포함하고, 중복이 없어야함.
-  private boolean isEmailValid(String email) {
-    return email.contains("@") && !employeeRepository.existsByEmail(email);
-  }
 
   /**
    * 문자열-> Intant 변환 기능- "yyyy-MM-dd" 형식의 String을 Instant로 변환합니다.
@@ -161,30 +154,26 @@ public class EmployeeService {
 
     // next page
     Long lastId =
-        employees.isEmpty() ? null : employees.get(employees.size() - 1).getId();//nextIdAfter
-    String nextCursor = lastId != null ? encodeCursor(lastId) : null;
+        employees.isEmpty() ? null : employees.get(employees.size() - 1).getId();//nextIdAfter, 현 employees의 마지막 직원의 id
+    //넥스트커서로, 분류기준에 따라 값을 가져야함.
+    String nextCursor = lastId != null ? convertCursor(sortBy, employees.get(employees.size() - 1) ) : null;
     boolean hasNext = employees.size() == size;
 
     Long totalElements = employeeRepository.count();
 
-    return EmployeePageResponse.from(
+    return  EmployeePageResponse.from(
         EmployeeResponses, nextCursor, lastId, size, totalElements, hasNext);
   }
 
-  // 커서 인코딩
-  private String encodeCursor(Long id) {
-    return Base64.getEncoder()
-        .encodeToString(("{\"id\":" + id + "}").getBytes(StandardCharsets.UTF_8));
-  }
-
-  // 커서 값 디코딩
-  public static Long decodeCursor(String cursor) {
-    if (cursor == null || cursor.isEmpty()) {
-      return null;
+  // 커서의 값을 반환한다.
+  private String convertCursor(String sortBy, Employee employee) {
+    if(sortBy.equals("name")){
+      return employee.getName();
     }
-    // Base64로 디코딩 후 Long 값으로 변환
-    String decodedString = new String(Base64.getDecoder().decode(cursor));
-    return Long.valueOf(decodedString);
+    else if(sortBy.equals("hireDate")){
+      return DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault()).format(employee.getJoinedAt());
+    }
+    else return  employee.getCode();
   }
 
   /**

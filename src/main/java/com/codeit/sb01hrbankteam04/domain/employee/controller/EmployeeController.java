@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.management.InstanceAlreadyExistsException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,7 +50,7 @@ public class EmployeeController {
       @RequestParam(required = false) String hireDateFrom,
       @RequestParam(required = false) String hireDateTo,
       @RequestParam(required = false) String status,
-      @RequestParam(required = false) Long nextIdAfter,
+      @RequestParam(name ="idAfter", required = false) Long nextIdAfter,
       @RequestParam(required = false) String cursor,
       @RequestParam(defaultValue = "10") int size,
       @RequestParam(defaultValue = "hireDate") String sortField,
