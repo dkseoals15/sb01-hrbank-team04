@@ -25,7 +25,11 @@ public enum ErrorCode {
   FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다.", "요청한 파일이 존재하지 않습니다."),
   FILE_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "파일 삭제 권한 없음", "해당 파일을 삭제할 권한이 없습니다."),
   FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 삭제 실패", "파일 삭제 중 시스템 오류가 발생했습니다."),
-  FILE_DOWNLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 다운로드 실패", "파일 다운로드 중 오류가 발생했습니다.");
+  FILE_DOWNLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 다운로드 실패", "파일 다운로드 중 오류가 발생했습니다."),
+
+  //EMPLOYEE_HISTORY
+  REVISION_FOUND_ERROR(HttpStatus.NOT_FOUND, "수정 이력을 찾을 수 없습니다", "요청한 수정 이력 정보가 존재하지 않습니다");
+
 
   private final HttpStatus status;
   private final String message;

@@ -8,7 +8,10 @@ import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.ChangeLog
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.CursorPageResponseEmployeeDto;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.DiffDto;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.type.ModifyType;
+import com.codeit.sb01hrbankteam04.global.exception.CustomException;
+import com.codeit.sb01hrbankteam04.global.exception.ErrorCode;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -209,12 +212,17 @@ public class EmployeeChangeLogRepository {
     AuditReader auditReader = AuditReaderFactory.get(entityManager);
 
     // 🔥 1. 현재 revisionId에서 employeeId 가져오기
-    Object[] result = (Object[]) auditReader.createQuery()
-        .forRevisionsOfEntity(Employee.class, false, true)
-        .add(AuditEntity.revisionNumber().eq(revisionId))
-        .addProjection(AuditEntity.id())
-        .addProjection(AuditEntity.revisionType())
-        .getSingleResult();
+    Object[] result;
+    try {
+      result = (Object[]) auditReader.createQuery()
+          .forRevisionsOfEntity(Employee.class, false, true)
+          .add(AuditEntity.revisionNumber().eq(revisionId))
+          .addProjection(AuditEntity.id())
+          .addProjection(AuditEntity.revisionType())
+          .getSingleResult();
+    } catch (NoResultException e) {
+      throw new CustomException(ErrorCode.REVISION_FOUND_ERROR);
+    }
 
     if (result == null || result.length < 2) {
       return List.of();
