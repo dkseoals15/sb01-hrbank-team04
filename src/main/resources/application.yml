@@ -2,21 +2,33 @@ spring:
   application:
     name: sb01-hrbank-team04
   profiles:
-    active: dev # prod
+    active: prod
   servlet:
     multipart:
       enabled: true
+
   jpa:
     hibernate:
       ddl-auto: none
     database: postgresql
+    properties:
+      org.hibernate.envers.audit_table_suffix: _history_detail
+      org.hibernate.envers.revision_field_name: revisionId
+      org.hibernate.envers.revision_type_field_name: revtype
+      org.hibernate.envers.store_data_at_delete: true
+    open-in-view: false
   transaction:
     default-timeout: 30
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/${DB_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+
+hrbank:
+  storage:
+    type: local
+    local:
+      root-path: temp
+
+backup:
+  schedule:
+    rate: 3600000   # 1시간 (60분 * 60초 * 1000 밀리초 = 3600000) / 1분은 60000
 
 server:
   port: 8080
@@ -38,3 +50,4 @@ springdoc:
     doc-expansion: none
     filter: true
     show-extensions: true
+
