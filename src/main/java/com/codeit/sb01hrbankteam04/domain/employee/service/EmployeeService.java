@@ -232,8 +232,9 @@ public class EmployeeService {
       }
       newFile = fileService.create(optionalProfileRequest, FileType.PROFILE);
 
-      // TODO: Exception
-      employee.setProfile(fileRepository.findById(newFile.id()).orElseThrow());
+      employee.setProfile(fileRepository.findById(newFile.id()).orElseThrow(
+          () -> new NoSuchElementException("file not found")
+      ));
     }
     return employeeMapper.toDto(employee);
   }
@@ -250,6 +251,7 @@ public class EmployeeService {
     // email
     if (!current.getName().equals(updateDto.name()) && employeeRepository.existsByEmail(
         updateDto.email())) {
+      System.out.println("Email already exists");
       current.setEmail(updateDto.email());
     }
     // dept

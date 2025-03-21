@@ -112,7 +112,6 @@ public class EmployeeController {
     EmployeeRevisionListener.setMemo(updateRequest.memo());
     EmployeeRevisionListener.setModified(requestIPContext.getClientIp());
 
-    //TODO: update를 엔티티에서 하도록하기?
     EmployeeResponse employeeResponse = employeeService.update(id, updateRequest, profile);
     return ResponseEntity
         .status(HttpStatus.OK)

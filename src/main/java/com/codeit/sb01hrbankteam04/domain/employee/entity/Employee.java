@@ -3,6 +3,7 @@ package com.codeit.sb01hrbankteam04.domain.employee.entity;
 import com.codeit.sb01hrbankteam04.domain.department.entity.Department;
 import com.codeit.sb01hrbankteam04.domain.file.entity.File;
 import com.codeit.sb01hrbankteam04.global.entity.BaseUpdatableEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -59,7 +60,7 @@ public class Employee extends BaseUpdatableEntity {
   @Column(nullable = false)
   private Instant joinedAt;
 
-  @OneToOne(optional = true)
+  @OneToOne(cascade = CascadeType.PERSIST)
   @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile"), nullable = true)
   @OnDelete(action = OnDeleteAction.SET_NULL)
   @NotAudited // 프로필은 추적하지 않음
