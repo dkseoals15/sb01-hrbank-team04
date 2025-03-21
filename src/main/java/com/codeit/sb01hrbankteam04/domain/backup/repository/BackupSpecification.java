@@ -28,7 +28,7 @@ public class BackupSpecification {
       List<Predicate> predicates = new ArrayList<>();
 
       if (requestDto.worker() != null && !requestDto.worker().isEmpty()) {
-        predicates.add(criteriaBuilder.equal(root.get("backupBy"), requestDto.worker()));
+        predicates.add(criteriaBuilder.like(root.get("backupBy"), "%" + requestDto.worker() + "%"));
       }
       if (requestDto.status() != null && !requestDto.status().isEmpty()) {
         predicates.add(criteriaBuilder.equal(root.get("backupStatus"),
