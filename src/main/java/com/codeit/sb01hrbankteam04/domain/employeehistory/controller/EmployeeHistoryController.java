@@ -1,5 +1,6 @@
 package com.codeit.sb01hrbankteam04.domain.employeehistory.controller;
 
+import com.codeit.sb01hrbankteam04.domain.employeehistory.controller.api.EmployeeHistoryApi;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.request.ChangeLogRequest;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.request.CountFilterRequest;
 import com.codeit.sb01hrbankteam04.domain.employeehistory.dto.response.CursorPageResponseEmployeeDto;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/change-logs")
 @RequiredArgsConstructor
-public class EmployeeHistoryController {
+public class EmployeeHistoryController implements EmployeeHistoryApi {
 
   private final EmployeeChangeLogRepository repository;
 

@@ -55,43 +55,44 @@ public class DepartmentService {
 
   @Transactional(readOnly = true)
   public CursorPageResponseDepartmentDto getDepartments(
-      String nameOrDescription, Long idAfter, String cursor, int size, String sortField,
-      String sortDirection) {
+          String nameOrDescription, Long idAfter, String cursor, int size, String sortField,
+          String sortDirection) {
 
-    //  `cursor` 값이 있으면 디코딩하여 `idAfter`로 변환
-    Long actualIdAfter = (cursor != null) ? decodeCursor(cursor) : idAfter;
+    // 커서가 있을 때만 디코딩해서 idAfter로 사용
+    Long actualIdAfter = (cursor != null && !cursor.isEmpty()) ? decodeCursor(cursor) : idAfter;
 
-    //  정렬(Sort) 객체 생성
+    // 정렬 생성
     Sort sort = Sort.by(sortField);
-    if ("desc".equalsIgnoreCase(sortDirection)) {
-      sort = sort.descending();
-    } else {
-      sort = sort.ascending();
-    }
+    sort = "desc".equalsIgnoreCase(sortDirection) ? sort.descending() : sort.ascending();
 
-    // `Pageable` 객체 생성 (정렬 및 페이지 크기 설정)
+    // Pageable
     Pageable pageable = PageRequest.of(0, size, sort);
 
-    //  Repository 호출 (검색 + 정렬 + 페이지네이션 적용)
+    // Repository
     List<Department> departments = departmentRepository.findDepartmentsByCursor(
-        nameOrDescription, actualIdAfter, pageable);
+            nameOrDescription, actualIdAfter, pageable);
 
-    // `DepartmentDto` 변환
+    // DTO 변환
     List<DepartmentDto> departmentDtos = departments.stream()
-        .map(DepartmentDto::fromEntity)
-        .collect(Collectors.toList());
+            .map(DepartmentDto::fromEntity)
+            .collect(Collectors.toList());
 
-    // 전체 부서 개수 계산
+    // 전체 수
     Long totalElements = departmentRepository.count();
 
-    // 다음 페이지를 위한 커서 생성
+    // 다음 커서 설정
     Long lastId = departments.isEmpty() ? null : departments.get(departments.size() - 1).getId();
-    String nextCursor = (lastId != null) ? encodeCursor(lastId) : null;
-    boolean hasNext = departments.size() == size;
+    String nextCursor = null;
+    if (hasNextPage(departments, size) && lastId != null) {
+      nextCursor = encodeCursor(lastId);
+    }
 
-    // 결과 반환
     return CursorPageResponseDepartmentDto.from(
-        departmentDtos, nextCursor, lastId, size, totalElements, hasNext);
+            departmentDtos, nextCursor, lastId, size, totalElements, hasNextPage(departments, size));
+  }
+
+  private boolean hasNextPage(List<Department> departments, int size) {
+    return departments.size() == size;
   }
 
   /**
@@ -102,7 +103,7 @@ public class DepartmentService {
    */
   private String encodeCursor(Long id) {
     return Base64.getEncoder()
-        .encodeToString(("{\"id\": " + id + "}").getBytes(StandardCharsets.UTF_8));
+            .encodeToString(("{\"id\": " + id + "}").getBytes(StandardCharsets.UTF_8));
   }
 
   /**
